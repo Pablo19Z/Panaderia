@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Lista de Productos</h1>
+    <div class="product-grid">
+        {% for producto in productos %}
+            <div class="product-card">
+                <h2>{{ producto.nombre }}</h2>
+                <p>{{ producto.descripcion }}</p>
+                <p>Precio: ${{ producto.precio_min }} - ${{ producto.precio_max }}</p>
+                <p>Stock: {{ producto.stock }}</p>
+                <form action="{{ url_for('add_to_cart', producto_id=producto.id) }}" method="POST">
+                    <button type="submit">Agregar al Carrito</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('cart') }}">Ver Carrito</a>
+</body>
+</html>
