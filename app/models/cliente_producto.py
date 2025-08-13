@@ -11,7 +11,7 @@ class ClienteProducto(db.Model):
 
     # Relación con Cliente usando back_populates
     cliente = db.relationship('Cliente', back_populates='carrito')
-    # Relación con Producto usando backref (puedes cambiar a back_populates si prefieres)
+    # Relación con Producto usando backref
     producto = db.relationship('Producto', backref='en_carrito')
 
     def __repr__(self):

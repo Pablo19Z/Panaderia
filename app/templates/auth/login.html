@@ -4,40 +4,141 @@
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+        }
+        .header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+        .profile a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        .profile a:hover {
+            color: #ffcccc;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #333333;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .container h1 {
+            color: #ffcccc;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .container label {
+            font-size: 14px;
+            color: #e0e0e0;
+        }
+        .container input {
+            padding: 10px;
+            border: 1px solid #4A2C2A;
+            border-radius: 5px;
+            background-color: #444;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        .container button {
+            padding: 10px;
+            background-color: #4A2C2A;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .container button:hover {
+            background-color: #6b3d3a;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+        .alert-success { background-color: #1a3c2e; color: #d4edda; }
+        .alert-info { background-color: #1a2e3c; color: #cce5ff; }
+        .alert-danger { background-color: #3c1a1a; color: #f8d7da; }
+        .alert-warning { background-color: #3c2e1a; color: #fff3cd; }
+        .alert.hidden {
+            opacity: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <h2>Iniciar Sesión</h2>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            <form method="POST" action="">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    {{ form.email.label(class="form-label") }}
-                    {{ form.email(class="form-control") }}
-                    {% for error in form.email.errors %}
-                        <span class="error">{{ error }}</span>
-                    {% endfor %}
-                </div>
-                <div class="form-group">
-                    {{ form.contraseña.label(class="form-label") }}
-                    {{ form.contraseña(class="form-control") }}
-                    {% for error in form.contraseña.errors %}
-                        <span class="error">{{ error }}</span>
-                    {% endfor %}
-                </div>
-                <div class="form-group">
-                    {{ form.submit(class="btn btn-primary") }}
-                </div>
-            </form>
-            <p class="login-link">¿No tienes cuenta? <a href="{{ url_for('register') }}">Regístrate aquí</a>.</p>
+    <div class="header">
+        <h3>Bienvenido a Panadería</h3>
+        <div class="profile">
+            <a href="{{ url_for('register') }}">Registrarse</a>
         </div>
     </div>
+
+    <div class="container">
+        <h1>Iniciar Sesión</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" id="alert-{{ loop.index }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.email.label }}<br>
+                {{ form.email(size=32) }}
+            </div>
+            <div>
+                {{ form.contraseña.label }}<br>
+                {{ form.contraseña(size=32) }}
+            </div>
+            <div>
+                {{ form.submit() }}
+            </div>
+        </form>
+        <p style="color: #cccccc; text-align: center; margin-top: 15px;">¿No tienes una cuenta? <a href="{{ url_for('register') }}" style="color: #ffcccc;">Créala aquí</a>.</p>
+    </div>
+    <a href="{{ url_for('index') }}" style="display: block; text-align: center; color: #ffcccc; margin: 20px 0; text-decoration: none;">Volver</a>
+
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.classList.add('hidden');
+            });
+        }, 5000); // Desaparece después de 5 segundos
+    </script>
 </body>
 </html>

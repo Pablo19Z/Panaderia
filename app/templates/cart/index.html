@@ -4,22 +4,172 @@
     <meta charset="UTF-8">
     <title>Carrito</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+        }
+        .header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        .header h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #ff9999; /* Rosa más brillante */
+            font-style: italic; /* Cursiva */
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+        .profile a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        .profile a:hover {
+            color: #ffcccc;
+        }
+        .profile span {
+            font-size: 16px;
+        }
+        .carrito {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #333333;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #444;
+        }
+        .item:last-child {
+            border-bottom: none;
+        }
+        .item h2 {
+            color: #ffcccc;
+            margin: 0;
+            font-size: 18px;
+        }
+        .item p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #cccccc;
+        }
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: right;
+            font-size: 18px;
+            color: #ffcccc;
+        }
+        .clear-cart {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .clear-cart button {
+            padding: 10px 20px;
+            background-color: #4A2C2A;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .clear-cart button:hover {
+            background-color: #6b3d3a;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+        .alert-success { background-color: #1a3c2e; color: #d4edda; }
+        .alert-info { background-color: #1a2e3c; color: #cce5ff; }
+        .alert-danger { background-color: #3c1a1a; color: #f8d7da; }
+        .alert-warning { background-color: #3c2e1a; color: #fff3cd; }
+        .alert.hidden {
+            opacity: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-    <h1>Tu Carrito</h1>
-    {% if carrito %}
-        <ul>
+    <div class="header">
+        <h3>Migas de Oro Doré</h3>
+        {% if current_user.is_authenticated %}
+            <div class="profile">
+                <span>Hola, {{ current_user.nombre }}!</span>
+                <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+            </div>
+        {% else %}
+            <div class="profile">
+                <a href="{{ url_for('login') }}">Iniciar Sesión</a> | <a href="{{ url_for('register') }}">Registrarse</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="carrito">
+        <h1>Carrito</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" id="alert-{{ loop.index }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% if carrito and carrito|length > 0 %}
             {% for item in carrito %}
-                <li>{{ item.producto.nombre }} - Cantidad: {{ item.cantidad }} - Subtotal: ${{ item.subtotal }}</li>
+            <div class="item">
+                <h2>{{ item.producto.nombre if item.producto else 'Producto no disponible' }}</h2>
+                <p>Cantidad: {{ item.cantidad }}</p>
+                <p>Subtotal: ${{ item.subtotal }}</p>
+            </div>
             {% endfor %}
-        </ul>
-        <p>Total: ${{ total }}</p>
-        <form action="{{ url_for('checkout') }}" method="POST">
-            <button type="submit">Proceder al Pago</button>
-        </form>
-    {% else %}
-        <p>Tu carrito está vacío.</p>
-    {% endif %}
-    <a href="{{ url_for('index') }}">Volver a Productos</a>
+            <p class="total">Total: ${{ total }}</p>
+            <div class="clear-cart">
+                <form action="{{ url_for('clear_cart') }}" method="POST">
+                    <button type="submit">Vaciar Carrito</button>
+                </form>
+            </div>
+            {% if not current_user.is_authenticated %}
+                <p style="color: #cccccc;">Para guardar tu carrito, realizar tu pedido de panes, pasteles o dulces, y disfrutar de nuestras delicias, <a href="{{ url_for('login') }}" style="color: #ffcccc;">inicia sesión</a>.</p>
+            {% else %}
+                <p style="color: #cccccc;">¡Estás autenticado! El total es ${{ total }}.</p>
+            {% endif %}
+        {% else %}
+            <p style="color: #cccccc;">Tu carrito está vacío.</p>
+        {% endif %}
+    </div>
+    <a href="{{ url_for('index') }}" style="display: block; text-align: center; color: #ffcccc; margin: 20px 0; text-decoration: none;">Volver</a>
+
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.classList.add('hidden');
+            });
+        }, 5000); // Desaparece después de 5 segundos
+    </script>
 </body>
 </html>

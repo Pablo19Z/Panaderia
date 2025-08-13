@@ -23,5 +23,17 @@ class Cliente(db.Model):
     def check_password(self, password):
         return check_password_hash(self.contrasenia_hash, password)
 
+    def is_active(self):
+        return True
+
+    def get_id(self):
+        return str(self.id)
+
+    def is_authenticated(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
     def __repr__(self):
         return f'<Cliente {self.nombre}>'

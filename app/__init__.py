@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import datetime
@@ -16,13 +16,19 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'login'
 
-    # Importa los modelos
+    # Importar modelos después de inicializar db
     from .models import Usuario, Rol, Cliente, Producto, Categoria, ClienteProducto
 
     # Registra las rutas dinámicamente
     with app.app_context():
-        from .routes import register_routes
-        register_routes(app)  # Pasa app como argumento
+        from .routes.public import register, login, logout, add_to_cart, cart, index, clear_cart
+        app.route('/register', methods=['GET', 'POST'])(register)
+        app.route('/login', methods=['GET', 'POST'])(login)
+        app.route('/logout')(logout)
+        app.route('/add_to_cart/<int:producto_id>', methods=['POST'])(add_to_cart)
+        app.route('/cart')(cart)
+        app.route('/clear_cart', methods=['POST'])(clear_cart)
+        app.route('/')(index)
 
         db.create_all()
 
@@ -114,5 +120,16 @@ def create_app():
 
 @login_manager.user_loader
 def load_user(user_id):
-    from .models import Usuario
-    return Usuario.query.get(int(user_id))
+    from .models import Cliente, Producto, ClienteProducto
+    user = Cliente.query.get(int(user_id))
+    if user and 'cart' in session:
+        for prod_id, qty in session['cart'].items():
+            producto = Producto.query.get(prod_id)
+            if producto and producto.stock >= qty:
+                if not any(item.producto_id == prod_id for item in user.carrito):
+                    item = ClienteProducto(cliente_id=user.id, producto_id=prod_id, cantidad=qty, subtotal=producto.precio_min * qty)
+                    db.session.add(item)
+                    producto.stock -= qty
+        db.session.commit()
+        session.pop('cart', None)
+    return user
