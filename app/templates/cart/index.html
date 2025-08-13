@@ -5,6 +5,9 @@
     <title>Carrito</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'); /* Actualizamos a una versión estable de Font Awesome */
+
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -23,9 +26,19 @@
         }
         .header h3 {
             margin: 0;
-            font-size: 20px;
-            color: #ff9999; /* Rosa más brillante */
-            font-style: italic; /* Cursiva */
+            font-size: 24px;
+            color: #ff9999; /* Rosa brillante */
+            font-family: 'Dancing Script', cursive;
+            display: flex;
+            align-items: center;
+        }
+        .header h3::before {
+            content: "\f7ec"; /* Icono de rebanada de pan (bread slice) */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 10px;
+            color: #ff9999; /* Mismo rosa brillante */
+            font-size: 1.5em; /* Aumentamos el tamaño para que sea más visible */
         }
         .profile {
             display: flex;
@@ -39,7 +52,7 @@
             transition: color 0.3s;
         }
         .profile a:hover {
-            color: #ffcccc;
+            color: #ff9999; /* Cambiado a rosa brillante */
         }
         .profile span {
             font-size: 16px;
@@ -62,7 +75,7 @@
             border-bottom: none;
         }
         .item h2 {
-            color: #ffcccc;
+            color: #ff9999; /* Cambiado a rosa brillante */
             margin: 0;
             font-size: 18px;
         }
@@ -76,7 +89,7 @@
             margin-top: 20px;
             text-align: right;
             font-size: 18px;
-            color: #ffcccc;
+            color: #ff9999; /* Cambiado a rosa brillante */
         }
         .clear-cart {
             margin-top: 20px;
@@ -154,7 +167,7 @@
                 </form>
             </div>
             {% if not current_user.is_authenticated %}
-                <p style="color: #cccccc;">Para guardar tu carrito, realizar tu pedido de panes, pasteles o dulces, y disfrutar de nuestras delicias, <a href="{{ url_for('login') }}" style="color: #ffcccc;">inicia sesión</a>.</p>
+                <p style="color: #cccccc;">Para guardar tu carrito, realizar tu pedido de panes, pasteles o dulces, y disfrutar de nuestras delicias, <a href="{{ url_for('login') }}" style="color: #ff9999;">inicia sesión</a>.</p>
             {% else %}
                 <p style="color: #cccccc;">¡Estás autenticado! El total es ${{ total }}.</p>
             {% endif %}
@@ -162,7 +175,7 @@
             <p style="color: #cccccc;">Tu carrito está vacío.</p>
         {% endif %}
     </div>
-    <a href="{{ url_for('index') }}" style="display: block; text-align: center; color: #ffcccc; margin: 20px 0; text-decoration: none;">Volver</a>
+    <a href="{{ url_for('index') }}" style="display: block; text-align: center; color: #ff9999; margin: 20px 0; text-decoration: none;">Volver</a>
 
     <script>
         setTimeout(() => {

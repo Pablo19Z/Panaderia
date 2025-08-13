@@ -5,6 +5,9 @@
     <title>{{ title }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'); /* Actualizamos a una versión estable de Font Awesome */
+
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -23,9 +26,19 @@
         }
         .header h3 {
             margin: 0;
-            font-size: 20px;
-            color: #ff9999; /* Rosa más brillante */
-            font-style: italic; /* Cursiva */
+            font-size: 24px;
+            color: #ff9999; /* Rosa brillante */
+            font-family: 'Dancing Script', cursive;
+            display: flex;
+            align-items: center;
+        }
+        .header h3::before {
+            content: "\f7ec"; /* Icono de rebanada de pan (bread slice) */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 10px;
+            color: #ff9999; /* Mismo rosa brillante */
+            font-size: 1.5em; /* Aumentamos el tamaño para que sea más visible */
         }
         .profile {
             display: flex;
@@ -39,7 +52,7 @@
             transition: color 0.3s;
         }
         .profile a:hover {
-            color: #ffcccc;
+            color: #ff9999; /* Cambiado a rosa brillante */
         }
         .profile span {
             font-size: 16px;
@@ -51,7 +64,7 @@
             text-align: center;
         }
         .product-grid h1 {
-            color: #ffcccc;
+            color: #ff9999; /* Cambiado a rosa brillante */
             margin-bottom: 20px;
             font-size: 24px;
         }
@@ -86,7 +99,7 @@
             transform: translateY(-5px);
         }
         .product-card h2 {
-            color: #ffcccc;
+            color: #ff9999; /* Cambiado a rosa brillante */
             margin: 0 0 10px;
             font-size: 20px;
         }
@@ -208,7 +221,7 @@
             {% endfor %}
         </div>
     </div>
-    <a href="{{ url_for('cart') }}" style="display: block; text-align: center; color: #ffcccc; margin: 20px 0; text-decoration: none;">Ver Carrito</a>
+    <a href="{{ url_for('cart') }}" style="display: block; text-align: center; color: #ff9999; margin: 20px 0; text-decoration: none;">Ver Carrito</a>
 
     <script>
         setTimeout(() => {
