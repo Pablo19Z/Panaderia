@@ -1,4 +1,6 @@
+# ========================
 # Python
+# ========================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -21,41 +23,72 @@ wheels/
 *.egg
 MANIFEST
 
+# ========================
 # Flask
+# ========================
 instance/
 .webassets-cache
 
+# ========================
 # Base de datos
+# ========================
 *.db
 *.sqlite
 *.sqlite3
 
+# ========================
 # Entorno virtual
+# ========================
 venv/
 env/
 ENV/
+.venv/
 
-# IDE
+# ========================
+# IDE / Editores
+# ========================
 .vscode/
 .idea/
 *.swp
 *.swo
 
+# ========================
 # Logs
+# ========================
 *.log
 
+# ========================
 # Variables de entorno
+# ========================
 .env
 .env.local
 .env.production
+.env.development
 
+# ========================
 # Archivos temporales
+# ========================
 .DS_Store
 Thumbs.db
 
+# ========================
 # Uploads
+# ========================
 uploads/
 static/images/uploads/
 
+# ========================
 # Configuración local
+# ========================
 config_local.py
+
+# ========================
+# Node / Next.js
+# ========================
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
