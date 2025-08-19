@@ -15,10 +15,8 @@ def get_current_user():
 
 def get_cart_count():
     """Obtiene el número de items en el carrito"""
-    if 'user_id' not in session:
-        return 0
-    cliente = Cliente.find_by_id(session['user_id'])
-    return cliente.contar_items_carrito() if cliente else 0
+    carrito = session.get('carrito', {})
+    return sum(carrito.values())
 
 @dashboard_bp.route('/cliente')
 @role_required('cliente')

@@ -4,11 +4,9 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-6">
-    <!-- Simplificando header sin botón extra -->
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Mis Favoritos</h1>
     
     {% if productos %}
-        <!-- Grid simple sin estilos complejos -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for producto in productos %}
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -19,7 +17,8 @@
                 <div class="p-4">
                     <h3 class="font-bold text-lg mb-2">{{ producto.nombre }}</h3>
                     <p class="text-gray-600 text-sm mb-3">
-                        {{ producto.descripcion[:80] if producto.descripcion else 'Delicioso producto de nuestra panadería' }}...
+                        {{ producto.descripcion[:80] if producto.descripcion and producto.descripcion|length > 80 else producto.descripcion }}
+                        {% if producto.descripcion and producto.descripcion|length > 80 %}...{% endif %}
                     </p>
                     
                     <div class="flex justify-between items-center mb-3">
@@ -27,6 +26,7 @@
                     </div>
                     
                     <div class="flex gap-2">
+                        <!-- Added proper error handling for favorite toggle -->
                         <button onclick="toggleFavorito({{ producto.id }}, this)" 
                                 class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 text-sm">
                             Quitar de Favoritos
@@ -41,7 +41,6 @@
             {% endfor %}
         </div>
     {% else %}
-        <!-- Estado vacío simple -->
         <div class="text-center py-12">
             <h3 class="text-xl font-semibold text-gray-700 mb-4">No tienes productos favoritos</h3>
             <p class="text-gray-600 mb-6">Explora nuestros productos y agrega tus favoritos</p>
@@ -52,4 +51,99 @@
         </div>
     {% endif %}
 </div>
+
+<!-- Added error handling script for favorites -->
+<script>
+function mostrarError(mensaje) {
+    // Create error notification
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50';
+    errorDiv.textContent = mensaje;
+    document.body.appendChild(errorDiv);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.parentNode.removeChild(errorDiv);
+        }
+    }, 3000);
+}
+
+function toggleFavorito(productoId, button) {
+    fetch('/api/favoritos/toggle', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            producto_id: productoId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // If removed from favorites, remove the card from the page
+            if (!data.es_favorito) {
+                const card = button.closest('.bg-white');
+                if (card) {
+                    card.remove();
+                    
+                    // Check if no more favorites
+                    const remainingCards = document.querySelectorAll('.bg-white.rounded-lg.shadow-md');
+                    if (remainingCards.length === 0) {
+                        location.reload(); // Reload to show empty state
+                    }
+                }
+            }
+        } else {
+            mostrarError(data.message || 'Error al gestionar favoritos');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarError('Error al gestionar favoritos');
+    });
+}
+
+function agregarAlCarrito(productoId) {
+    fetch('/api/carrito/agregar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            producto_id: productoId,
+            cantidad: 1
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update cart count in navbar
+            const cartBadge = document.querySelector('.badge');
+            if (cartBadge && data.carrito_count) {
+                cartBadge.textContent = data.carrito_count;
+            }
+            
+            // Show success message
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
+            successDiv.textContent = 'Producto agregado al carrito';
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.parentNode.removeChild(successDiv);
+                }
+            }, 3000);
+        } else {
+            mostrarError(data.message || 'Error al agregar al carrito');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarError('Error al agregar al carrito');
+    });
+}
+</script>
 {% endblock %}

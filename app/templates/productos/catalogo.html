@@ -140,15 +140,38 @@ Productos - Migas de oro Dorè
                         </small>
                     </div>
                     <div class="d-flex gap-2 mb-2">
-                        <!-- Cambié producto[0] por producto.id y producto[5] por producto.stock -->
-                        <button class="btn btn-outline-primary btn-sm" onclick="agregarAFavoritos({{ producto.id }})" 
+                        <!-- Added conditional styling for favorite button based on favorite status -->
+                        {% set es_favorito = producto.id|string in favoritos_ids %}
+                        <button class="btn btn-sm favorito-btn {% if es_favorito %}btn-warning{% else %}btn-outline-primary{% endif %}" 
+                                onclick="agregarAFavoritos({{ producto.id }}, this)" 
+                                data-producto-id="{{ producto.id }}"
+                                data-es-favorito="{{ 'true' if es_favorito else 'false' }}"
                                 {% if producto.stock == 0 %}disabled{% endif %}>
                             <i class="fas fa-heart"></i>
                         </button>
-                        <button class="btn btn-primary btn-sm flex-grow-1" onclick="agregarAlCarrito({{ producto.id }})"
-                                {% if producto.stock == 0 %}disabled{% endif %}>
-                            <i class="fas fa-cart-plus me-1"></i>Al Carrito
-                        </button>
+                        <!-- Added quantity selector and improved cart button -->
+                        <div class="input-group input-group-sm flex-grow-1">
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="cambiarCantidadCatalogo({{ producto.id }}, -1)"
+                                    {% if producto.stock == 0 %}disabled{% endif %}>
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="form-control text-center" 
+                                   id="cantidad-{{ producto.id }}" 
+                                   value="1" 
+                                   min="1" 
+                                   max="{{ producto.stock }}"
+                                   {% if producto.stock == 0 %}disabled{% endif %}>
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="cambiarCantidadCatalogo({{ producto.id }}, 1)"
+                                    {% if producto.stock == 0 %}disabled{% endif %}>
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="btn btn-primary" onclick="agregarAlCarritoConCantidad({{ producto.id }})"
+                                    {% if producto.stock == 0 %}disabled{% endif %}>
+                                <i class="fas fa-cart-plus me-1"></i>Agregar
+                            </button>
+                        </div>
                     </div>
                     <!-- Cambié producto[0] por producto.id -->
                     <a href="{{ url_for('productos.detalle', producto_id=producto.id) }}" 
@@ -181,10 +204,76 @@ Productos - Migas de oro Dorè
 
 {% block scripts %}
 <script>
-    // Función para agregar a favoritos (usa la función global)
-    function agregarAFavoritos(productoId) {
-        const button = event.target.closest('button');
-        toggleFavorito(productoId, button);
+    function agregarAFavoritos(productoId, button) {
+        const esFavorito = button.getAttribute('data-es-favorito') === 'true';
+        
+        fetch('/api/favoritos/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                producto_id: productoId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update button appearance based on new state
+                if (data.es_favorito) {
+                    // Now is favorite - make it yellow
+                    button.className = 'btn btn-sm favorito-btn btn-warning';
+                    button.setAttribute('data-es-favorito', 'true');
+                } else {
+                    // No longer favorite - make it outline
+                    button.className = 'btn btn-sm favorito-btn btn-outline-primary';
+                    button.setAttribute('data-es-favorito', 'false');
+                }
+                
+                // Show success message
+                const message = data.es_favorito ? 'Agregado a favoritos' : 'Eliminado de favoritos';
+                mostrarNotificacion(message, 'success');
+            } else {
+                mostrarNotificacion(data.message || 'Error al gestionar favoritos', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarNotificacion('Error al gestionar favoritos', 'error');
+        });
+    }
+    
+    function cambiarCantidadCatalogo(productoId, delta) {
+        const cantidadInput = document.getElementById(`cantidad-${productoId}`);
+        const nuevaCantidad = parseInt(cantidadInput.value) + delta;
+        const maxCantidad = parseInt(cantidadInput.max);
+        
+        if (nuevaCantidad >= 1 && nuevaCantidad <= maxCantidad) {
+            cantidadInput.value = nuevaCantidad;
+        }
+    }
+    
+    function agregarAlCarritoConCantidad(productoId) {
+        const cantidadInput = document.getElementById(`cantidad-${productoId}`);
+        const cantidad = parseInt(cantidadInput.value);
+        
+        // Use the global function from base.html
+        agregarAlCarrito(productoId, cantidad);
+    }
+    
+    function mostrarNotificacion(mensaje, tipo) {
+        const color = tipo === 'success' ? 'bg-success' : 'bg-danger';
+        const notificationDiv = document.createElement('div');
+        notificationDiv.className = `position-fixed top-0 end-0 m-3 ${color} text-white px-3 py-2 rounded shadow`;
+        notificationDiv.style.zIndex = '9999';
+        notificationDiv.textContent = mensaje;
+        document.body.appendChild(notificationDiv);
+        
+        setTimeout(() => {
+            if (notificationDiv.parentNode) {
+                notificationDiv.parentNode.removeChild(notificationDiv);
+            }
+        }, 3000);
     }
     
     // Efecto hover para las cards

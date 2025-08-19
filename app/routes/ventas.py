@@ -16,7 +16,7 @@ def get_current_user():
 
 def get_cart_from_session():
     """Obtiene items del carrito desde la sesión"""
-    cart = session.get('cart', {})
+    cart = session.get('carrito', {})
     items = []
     total = 0
     
@@ -41,14 +41,14 @@ def get_cart_from_session():
 def carrito():
     """Página del carrito de compras (funciona sin login)"""
     print(f"[v0] Sesión completa: {dict(session)}")
-    print(f"[v0] Carrito en sesión: {session.get('cart', {})}")
+    print(f"[v0] Carrito en sesión: {session.get('carrito', {})}")
     
     items_carrito, total = get_cart_from_session()
     print(f"[v0] Items del carrito obtenidos: {items_carrito}")
     print(f"[v0] Total calculado: {total}")
     
     usuario = get_current_user()
-    carrito_count = len(session.get('cart', {}))
+    carrito_count = len(session.get('carrito', {}))
     
     return render_template('carrito.html',
                          items=items_carrito,
@@ -143,7 +143,7 @@ def checkout():
     
     total = cliente.get_total_carrito()
     usuario = get_current_user()
-    carrito_count = len(session.get('cart', {}))
+    carrito_count = sum(session.get('carrito', {}).values())
     
     return render_template('checkout.html',
                          items=items_carrito,

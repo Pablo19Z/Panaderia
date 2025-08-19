@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app.models.producto import Producto
 from app.models.categoria import Categoria
 from app.models.cliente import Cliente
+from app.models.favorito import Favorito
 from app.utils.decorators import login_required
 
 productos_bp = Blueprint('productos', __name__)
@@ -20,6 +21,20 @@ def get_cart_count():
     cliente = Cliente.find_by_id(session['user_id'])
     return cliente.contar_items_carrito() if cliente else 0
 
+def get_user_favorites():
+    """Obtiene la lista de IDs de productos favoritos del usuario actual"""
+    if 'user_id' in session:
+        # Usuario logueado - obtener de base de datos
+        user_id = session['user_id']
+        cliente = Cliente.find_by_id(user_id)
+        if cliente:
+            favoritos = cliente.get_favoritos()
+            return [str(fav[2]) for fav in favoritos]  # fav[2] es producto_id
+    else:
+        # Usuario no logueado - obtener de sesión
+        return session.get('favoritos', [])
+    return []
+
 @productos_bp.route('/')
 def index():
     """Página principal de la panadería"""
@@ -28,12 +43,14 @@ def index():
     
     usuario = get_current_user()
     carrito_count = get_cart_count()
+    favoritos_ids = get_user_favorites()
     
     return render_template('productos/index.html', 
                          productos=productos_destacados, 
                          categorias=categorias,
                          usuario=usuario,
-                         carrito_count=carrito_count)
+                         carrito_count=carrito_count,
+                         favoritos_ids=favoritos_ids)
 
 @productos_bp.route('/productos')
 def catalogo():
@@ -51,6 +68,7 @@ def catalogo():
     
     usuario = get_current_user()
     carrito_count = get_cart_count()
+    favoritos_ids = get_user_favorites()
     
     return render_template('productos/catalogo.html', 
                          productos=productos_lista,
@@ -58,7 +76,8 @@ def catalogo():
                          categoria_actual=categoria_actual,
                          busqueda=busqueda,
                          usuario=usuario,
-                         carrito_count=carrito_count)
+                         carrito_count=carrito_count,
+                         favoritos_ids=favoritos_ids)
 
 @productos_bp.route('/producto/<int:producto_id>')
 def detalle(producto_id):
@@ -75,11 +94,13 @@ def detalle(producto_id):
     
     usuario = get_current_user()
     carrito_count = get_cart_count()
+    favoritos_ids = get_user_favorites()
     
     return render_template('productos/detalle_producto.html',
                          producto=producto,
                          productos_relacionados=productos_relacionados,
                          usuario=usuario,
-                         carrito_count=carrito_count)
+                         carrito_count=carrito_count,
+                         favoritos_ids=favoritos_ids)
 
 # Las rutas de carrito y favoritos ahora están en app/routes/api.py

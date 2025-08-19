@@ -34,19 +34,19 @@ def register_blueprints(app):
                 cliente = Cliente.find_by_id(session['user_id'])
                 if cliente:
                     favoritos_data = cliente.get_favoritos()
-                    # Convertir tuplas de favoritos a objetos producto
                     for favorito in favoritos_data:
-                        # favorito[4] = nombre, favorito[5] = precio, favorito[6] = imagen, favorito[7] = descripcion
+                        # favorito structure: (f.id, f.usuario_id, f.producto_id, f.fecha_agregado, p.nombre, p.precio, p.imagen, p.descripcion)
                         producto_obj = type('Producto', (), {
                             'id': favorito[2],  # producto_id
-                            'nombre': favorito[4],
-                            'precio': favorito[5],
-                            'imagen_url': favorito[6],
-                            'descripcion': favorito[7]
+                            'nombre': favorito[4],  # p.nombre
+                            'precio': favorito[5],  # p.precio
+                            'imagen_url': favorito[6],  # p.imagen
+                            'descripcion': favorito[7] if favorito[7] else 'Delicioso producto de nuestra panadería'  # p.descripcion
                         })()
                         productos_favoritos.append(producto_obj)
             except Exception as e:
                 print(f"[v0] Error obteniendo favoritos de BD: {e}")
+                productos_favoritos = []
         else:
             favoritos_ids = session.get('favoritos', [])
             
@@ -67,12 +67,19 @@ def register_blueprints(app):
         width = request.args.get('width', '300')
         query = request.args.get('query', 'producto')
         
-        # Generar SVG dinámico sin texto placeholder
         svg_content = f'''<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100%" height="100%" fill="#f3f4f6"/>
-            <circle cx="50%" cy="40%" r="20" fill="#d1d5db"/>
-            <rect x="30%" y="60%" width="40%" height="8" fill="#d1d5db" rx="4"/>
-            <rect x="35%" y="75%" width="30%" height="6" fill="#e5e7eb" rx="3"/>
+            <defs>
+                <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f9fafb;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f3f4f6;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#bg)" stroke="#e5e7eb" stroke-width="1"/>
+            <circle cx="50%" cy="35%" r="25" fill="#d1d5db"/>
+            <path d="M{int(width)*0.4} {int(height)*0.5} Q{int(width)*0.5} {int(height)*0.45} {int(width)*0.6} {int(height)*0.5} 
+                     L{int(width)*0.65} {int(height)*0.7} L{int(width)*0.35} {int(height)*0.7} Z" fill="#d1d5db"/>
+            <rect x="25%" y="75%" width="50%" height="4" fill="#d1d5db" rx="2"/>
+            <rect x="30%" y="85%" width="40%" height="3" fill="#e5e7eb" rx="1.5"/>
         </svg>'''
         
         return Response(svg_content, mimetype='image/svg+xml')

@@ -120,6 +120,12 @@
                             <i class="fas fa-cookie-bite me-1"></i>Productos
                         </a>
                     </li>
+                    <!-- Agregando enlace directo a favoritos en el menú principal -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('favoritos') }}">
+                            <i class="fas fa-heart me-1"></i>Favoritos
+                        </a>
+                    </li>
                 </ul>
                 
                 <ul class="navbar-nav">
@@ -161,7 +167,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('ventas.carrito') }}">
                             <i class="fas fa-shopping-cart me-1"></i>Carrito
-                            <span class="badge bg-primary" id="cart-count">{{ carrito_count or 0 }}</span>
+                            <!-- Fixed carrito count display -->
+                            <span class="badge bg-primary" id="cart-count">{{ session.get('carrito', {})|length or 0 }}</span>
                         </a>
                     </li>
                 </ul>
@@ -174,7 +181,10 @@
         {% if messages %}
             <div class="container mt-3">
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    <!-- Improved flash message positioning and styling -->
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show position-relative" 
+                         role="alert" style="z-index: 1040;">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' if category == 'warning' else 'info-circle' if category == 'info' else 'times-circle' }} me-2"></i>
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -278,12 +288,24 @@
             }
         }
         
-        // Función para mostrar notificaciones
         function mostrarNotificacion(mensaje, tipo) {
-            const alertClass = tipo === 'success' ? 'alert-success' : 'alert-danger';
+            // Remove existing notifications first
+            const existingAlerts = document.querySelectorAll('.notification-toast');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            const alertClass = tipo === 'success' ? 'alert-success' : 
+                              tipo === 'warning' ? 'alert-warning' : 
+                              tipo === 'info' ? 'alert-info' : 'alert-danger';
+            
+            const iconClass = tipo === 'success' ? 'fa-check-circle' : 
+                             tipo === 'warning' ? 'fa-exclamation-triangle' : 
+                             tipo === 'info' ? 'fa-info-circle' : 'fa-times-circle';
+            
             const alertHtml = `
-                <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
-                     style="top: 80px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
+                <div class="alert ${alertClass} alert-dismissible fade show notification-toast" 
+                     style="position: fixed; top: 100px; right: 20px; z-index: 9999; min-width: 350px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" 
+                     role="alert">
+                    <i class="fas ${iconClass} me-2"></i>
                     ${mensaje}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -291,13 +313,14 @@
             
             document.body.insertAdjacentHTML('beforeend', alertHtml);
             
-            // Auto-remover después de 3 segundos
+            // Auto-remove after 4 seconds
             setTimeout(() => {
-                const alert = document.querySelector('.alert.position-fixed');
+                const alert = document.querySelector('.notification-toast');
                 if (alert) {
-                    alert.remove();
+                    alert.classList.remove('show');
+                    setTimeout(() => alert.remove(), 150);
                 }
-            }, 3000);
+            }, 4000);
         }
     </script>
     
