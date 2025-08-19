@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Vendedor - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Sidebar Vendedor -->
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-tie fa-3x text-success mb-2"></i>
+                    <h6 class="card-title">{{ usuario.nombre }}</h6>
+                    <span class="badge bg-success">Vendedor</span>
+                </div>
+            </div>
+            
+            <div class="list-group mt-3">
+                <a href="#pedidos-pendientes" class="list-group-item list-group-item-action active" data-bs-toggle="pill">
+                    <i class="fas fa-clock me-2"></i>Pedidos Pendientes
+                    <span class="badge bg-warning float-end">{{ pedidos|length }}</span>
+                </a>
+                <a href="#historial" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-history me-2"></i>Historial
+                </a>
+                <a href="#clientes" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-users me-2"></i>Clientes
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- Pedidos Pendientes -->
+                <div class="tab-pane fade show active" id="pedidos-pendientes">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="brand-title">Pedidos Pendientes</h2>
+                        <button class="btn btn-primary" onclick="location.reload()">
+                            <i class="fas fa-sync me-1"></i>Actualizar
+                        </button>
+                    </div>
+                    
+                    {% if pedidos %}
+                    <div class="row g-3">
+                        {% for pedido in pedidos %}
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2">
+                                            <h5 class="mb-0">Pedido #{{ pedido[0] }}</h5>
+                                            <small class="text-muted">{{ pedido[5] }}</small>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <strong>{{ pedido[8] }}</strong>
+                                            <br><small class="text-muted">Cliente</small>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="fw-bold text-primary">${{ "%.2f"|format(pedido[2]) }}</div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            {% if pedido[3] == 'pendiente' %}
+                                                <span class="badge bg-warning">Pendiente</span>
+                                            {% elif pedido[3] == 'preparando' %}
+                                                <span class="badge bg-info">Preparando</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-2">
+                                            <small class="text-muted">
+                                                <i class="fas fa-map-marker-alt me-1"></i>
+                                                {{ pedido[6][:30] }}...
+                                            </small>
+                                        </div>
+                                        <div class="col-md-2 text-end">
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary" onclick="verDetallePedido({{ pedido[0] }})">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                {% if pedido[3] == 'pendiente' %}
+                                                <button class="btn btn-success" onclick="cambiarEstadoPedido({{ pedido[0] }}, 'preparando')">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                {% elif pedido[3] == 'preparando' %}
+                                                <button class="btn btn-warning" onclick="cambiarEstadoPedido({{ pedido[0] }}, 'listo')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if pedido[8] %}
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <small class="text-muted">
+                                                <i class="fas fa-phone me-1"></i>{{ pedido[7] }}
+                                                {% if pedido[9] %}
+                                                    | <i class="fas fa-sticky-note me-1"></i>{{ pedido[9] }}
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-clipboard-check fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No hay pedidos pendientes</h4>
+                        <p class="text-muted">Todos los pedidos están al día</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Historial -->
+                <div class="tab-pane fade" id="historial">
+                    <h2 class="brand-title mb-4">Historial de Pedidos</h2>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Historial completo de pedidos próximamente disponible.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Clientes -->
+                <div class="tab-pane fade" id="clientes">
+                    <h2 class="brand-title mb-4">Gestión de Clientes</h2>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Panel de gestión de clientes próximamente disponible.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function verDetallePedido(pedidoId) {
+        alert(`Ver detalle del pedido #${pedidoId} - Funcionalidad próximamente`);
+    }
+    
+    function cambiarEstadoPedido(pedidoId, nuevoEstado) {
+        if (confirm(`¿Cambiar estado del pedido #${pedidoId} a ${nuevoEstado}?`)) {
+            alert('Funcionalidad de cambio de estado próximamente');
+        }
+    }
+</script>
+{% endblock %}

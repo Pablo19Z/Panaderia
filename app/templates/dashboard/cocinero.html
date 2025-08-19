@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Cocinero - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Sidebar Cocinero -->
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-utensils fa-3x text-warning mb-2"></i>
+                    <h6 class="card-title">{{ usuario.nombre }}</h6>
+                    <span class="badge bg-warning text-dark">Cocinero</span>
+                </div>
+            </div>
+            
+            <div class="list-group mt-3">
+                <a href="#en-preparacion" class="list-group-item list-group-item-action active" data-bs-toggle="pill">
+                    <i class="fas fa-fire me-2"></i>En Preparación
+                    <span class="badge bg-warning float-end">{{ pedidos|length }}</span>
+                </a>
+                <a href="#recetas" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-book me-2"></i>Recetas
+                </a>
+                <a href="#produccion" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-chart-line me-2"></i>Producción
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- Pedidos en Preparación -->
+                <div class="tab-pane fade show active" id="en-preparacion">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="brand-title">Pedidos en Preparación</h2>
+                        <div>
+                            <span class="badge bg-info fs-6 me-2">
+                                <i class="fas fa-clock me-1"></i>{{ pedidos|length }} pedidos activos
+                            </span>
+                            <button class="btn btn-primary" onclick="location.reload()">
+                                <i class="fas fa-sync me-1"></i>Actualizar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {% if pedidos %}
+                    <div class="row g-3">
+                        {% for pedido in pedidos %}
+                        <div class="col-md-6">
+                            <div class="card border-warning">
+                                <div class="card-header bg-warning text-dark">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Pedido #{{ pedido[0] }}</h5>
+                                        <small>{{ pedido[5] }}</small>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <strong>Cliente:</strong> {{ pedido[8] }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Productos:</strong>
+                                        <div class="mt-1">
+                                            {% if pedido[9] %}
+                                                {% for producto in pedido[9].split(',') %}
+                                                <span class="badge bg-primary me-1">{{ producto.strip() }}</span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="text-muted">Sin detalles</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong class="text-primary">${{ "%.2f"|format(pedido[2]) }}</strong>
+                                        </div>
+                                        <button class="btn btn-success btn-sm" onclick="marcarListo({{ pedido[0] }})">
+                                            <i class="fas fa-check me-1"></i>Marcar Listo
+                                        </button>
+                                    </div>
+                                    
+                                    {% if pedido[8] %}
+                                    <div class="mt-2 pt-2 border-top">
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ pedido[6][:40] }}...
+                                        </small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-utensils fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No hay pedidos en preparación</h4>
+                        <p class="text-muted">Todos los pedidos están listos o completados</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Recetas -->
+                <div class="tab-pane fade" id="recetas">
+                    <h2 class="brand-title mb-4">Libro de Recetas</h2>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-bread-slice me-2"></i>Panes</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-circle me-2 text-primary"></i>Pan Francés Tradicional</li>
+                                        <li><i class="fas fa-circle me-2 text-primary"></i>Croissant de Mantequilla</li>
+                                        <li><i class="fas fa-circle me-2 text-primary"></i>Pan Integral</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-birthday-cake me-2"></i>Pasteles</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-circle me-2 text-success"></i>Torta de Chocolate</li>
+                                        <li><i class="fas fa-circle me-2 text-success"></i>Cheesecake</li>
+                                        <li><i class="fas fa-circle me-2 text-success"></i>Torta de Vainilla</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Sistema completo de recetas próximamente disponible con ingredientes y procedimientos detallados.
+                    </div>
+                </div>
+                
+                <!-- Producción -->
+                <div class="tab-pane fade" id="produccion">
+                    <h2 class="brand-title mb-4">Control de Producción</h2>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Panel de control de producción próximamente disponible con métricas de rendimiento y planificación.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function marcarListo(pedidoId) {
+        if (confirm(`¿Marcar el pedido #${pedidoId} como listo para entrega?`)) {
+            alert('Funcionalidad de cambio de estado próximamente');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Administrativo - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-2">
+            <!-- Sidebar Admin -->
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-shield fa-3x text-danger mb-2"></i>
+                    <h6 class="card-title">{{ usuario.nombre }}</h6>
+                    <span class="badge bg-danger">Administrador</span>
+                </div>
+            </div>
+            
+            <div class="list-group mt-3">
+                <a href="#dashboard" class="list-group-item list-group-item-action active" data-bs-toggle="pill">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                <a href="#usuarios" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-users me-2"></i>Usuarios
+                </a>
+                <a href="#productos" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-box me-2"></i>Productos
+                </a>
+                <a href="#pedidos" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-shopping-bag me-2"></i>Pedidos
+                </a>
+                <a href="#reportes" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-10">
+            <div class="tab-content">
+                <!-- Dashboard Principal -->
+                <div class="tab-pane fade show active" id="dashboard">
+                    <h1 class="brand-title display-6 mb-4">Panel Administrativo</h1>
+                    
+                    <!-- Estadísticas Principales -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4>{{ estadisticas.total_usuarios }}</h4>
+                                            <p class="mb-0">Usuarios Activos</p>
+                                        </div>
+                                        <i class="fas fa-users fa-2x opacity-75"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4>{{ estadisticas.total_productos }}</h4>
+                                            <p class="mb-0">Productos</p>
+                                        </div>
+                                        <i class="fas fa-box fa-2x opacity-75"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4>{{ estadisticas.pedidos_hoy }}</h4>
+                                            <p class="mb-0">Pedidos Hoy</p>
+                                        </div>
+                                        <i class="fas fa-shopping-bag fa-2x opacity-75"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4>${{ "%.0f"|format(estadisticas.ventas_hoy) }}</h4>
+                                            <p class="mb-0">Ventas Hoy</p>
+                                        </div>
+                                        <i class="fas fa-dollar-sign fa-2x opacity-75"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Acciones Rápidas -->
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary" onclick="alert('Funcionalidad próximamente')">
+                                            <i class="fas fa-plus me-2"></i>Agregar Producto
+                                        </button>
+                                        <button class="btn btn-success" onclick="alert('Funcionalidad próximamente')">
+                                            <i class="fas fa-user-plus me-2"></i>Crear Usuario
+                                        </button>
+                                        <button class="btn btn-warning" onclick="alert('Funcionalidad próximamente')">
+                                            <i class="fas fa-chart-line me-2"></i>Ver Reportes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-exclamation-triangle me-2"></i>Alertas del Sistema</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-boxes me-2"></i>Productos con stock bajo: 3
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-clock me-2"></i>Pedidos pendientes: {{ estadisticas.pedidos_hoy }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gestión de Usuarios -->
+                <div class="tab-pane fade" id="usuarios">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="brand-title">Gestión de Usuarios</h2>
+                        <button class="btn btn-primary" onclick="alert('Funcionalidad próximamente')">
+                            <i class="fas fa-user-plus me-1"></i>Nuevo Usuario
+                        </button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th>Rol</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">
+                                                Funcionalidad de gestión de usuarios próximamente
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gestión de Productos -->
+                <div class="tab-pane fade" id="productos">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="brand-title">Gestión de Productos</h2>
+                        <button class="btn btn-primary" onclick="alert('Funcionalidad próximamente')">
+                            <i class="fas fa-plus me-1"></i>Nuevo Producto
+                        </button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Panel de gestión de productos en desarrollo. Próximamente podrás agregar, editar y eliminar productos.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gestión de Pedidos -->
+                <div class="tab-pane fade" id="pedidos">
+                    <h2 class="brand-title mb-4">Gestión de Pedidos</h2>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Panel de gestión de pedidos en desarrollo. Próximamente podrás ver y gestionar todos los pedidos.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reportes -->
+                <div class="tab-pane fade" id="reportes">
+                    <h2 class="brand-title mb-4">Reportes y Análisis</h2>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Sistema de reportes en desarrollo. Próximamente tendrás acceso a análisis detallados de ventas y rendimiento.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

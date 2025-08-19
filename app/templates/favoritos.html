@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Favoritos - Panadería Migas de Oro{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <!-- Simplificando header sin botón extra -->
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Mis Favoritos</h1>
+    
+    {% if productos %}
+        <!-- Grid simple sin estilos complejos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for producto in productos %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <img src="{{ producto.imagen_url or '/placeholder.svg?height=200&width=300&query=' + producto.nombre }}" 
+                     alt="{{ producto.nombre }}" 
+                     class="w-full h-48 object-cover">
+                
+                <div class="p-4">
+                    <h3 class="font-bold text-lg mb-2">{{ producto.nombre }}</h3>
+                    <p class="text-gray-600 text-sm mb-3">
+                        {{ producto.descripcion[:80] if producto.descripcion else 'Delicioso producto de nuestra panadería' }}...
+                    </p>
+                    
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xl font-bold text-amber-600">${{ "%.2f"|format(producto.precio) }}</span>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="toggleFavorito({{ producto.id }}, this)" 
+                                class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 text-sm">
+                            Quitar de Favoritos
+                        </button>
+                        <button onclick="agregarAlCarrito({{ producto.id }})" 
+                                class="bg-amber-600 text-white px-3 py-2 rounded hover:bg-amber-700 flex-1 text-sm">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Estado vacío simple -->
+        <div class="text-center py-12">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">No tienes productos favoritos</h3>
+            <p class="text-gray-600 mb-6">Explora nuestros productos y agrega tus favoritos</p>
+            <a href="{{ url_for('productos.catalogo') }}" 
+               class="bg-amber-600 text-white px-6 py-3 rounded hover:bg-amber-700">
+                Ver Productos
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
