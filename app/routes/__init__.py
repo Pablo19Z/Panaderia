@@ -19,7 +19,7 @@ def register_blueprints(app):
         from flask import render_template
         from app.models.producto import Producto
         productos_destacados = Producto.get_all(limit=6)
-        return render_template('productos/index.html', productos=productos_destacados)
+        return render_template('inicio.html', productos_destacados=productos_destacados)
     
     @app.route('/favoritos')
     def favoritos():

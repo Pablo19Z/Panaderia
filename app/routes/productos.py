@@ -35,22 +35,22 @@ def get_user_favorites():
         return session.get('favoritos', [])
     return []
 
-@productos_bp.route('/')
-def index():
-    """Página principal de la panadería"""
-    productos_destacados = Producto.get_all(limit=6)
-    categorias = Categoria.get_all()
-    
-    usuario = get_current_user()
-    carrito_count = get_cart_count()
-    favoritos_ids = get_user_favorites()
-    
-    return render_template('productos/index.html', 
-                         productos=productos_destacados, 
-                         categorias=categorias,
-                         usuario=usuario,
-                         carrito_count=carrito_count,
-                         favoritos_ids=favoritos_ids)
+# @productos_bp.route('/')
+# def index():
+#     """Página principal de la panadería"""
+#     productos_destacados = Producto.get_all(limit=6)
+#     categorias = Categoria.get_all()
+#     
+#     usuario = get_current_user()
+#     carrito_count = get_cart_count()
+#     favoritos_ids = get_user_favorites()
+#     
+#     return render_template('productos/index.html', 
+#                          productos=productos_destacados, 
+#                          categorias=categorias,
+#                          usuario=usuario,
+#                          carrito_count=carrito_count,
+#                          favoritos_ids=favoritos_ids)
 
 @productos_bp.route('/productos')
 def catalogo():

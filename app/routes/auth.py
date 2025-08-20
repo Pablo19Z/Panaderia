@@ -97,4 +97,4 @@ def logout():
     """Cerrar sesión"""
     session.clear()
     flash('Has cerrado sesión correctamente', 'info')
-    return redirect(url_for('productos.index'))
+    return redirect(url_for('index'))

@@ -31,7 +31,8 @@ Productos - Migas de oro Dorè
         <div class="col-md-4 text-md-end">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('productos.index') }}" class="text-decoration-none">Inicio</a></li>
+                    <!-- Fixed breadcrumb link to use correct route -->
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none">Inicio</a></li>
                     <li class="breadcrumb-item active">Productos</li>
                     {% if categoria_actual %}
                     <li class="breadcrumb-item active">{{ categoria_actual[1] }}</li>
@@ -230,16 +231,15 @@ Productos - Migas de oro Dorè
                     button.setAttribute('data-es-favorito', 'false');
                 }
                 
-                // Show success message
                 const message = data.es_favorito ? 'Agregado a favoritos' : 'Eliminado de favoritos';
-                mostrarNotificacion(message, 'success');
+                window.mostrarNotificacion(message, 'success');
             } else {
-                mostrarNotificacion(data.message || 'Error al gestionar favoritos', 'error');
+                window.mostrarNotificacion(data.message || 'Error al gestionar favoritos', 'error');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            mostrarNotificacion('Error al gestionar favoritos', 'error');
+            window.mostrarNotificacion('Error al gestionar favoritos', 'error');
         });
     }
     
@@ -259,21 +259,6 @@ Productos - Migas de oro Dorè
         
         // Use the global function from base.html
         agregarAlCarrito(productoId, cantidad);
-    }
-    
-    function mostrarNotificacion(mensaje, tipo) {
-        const color = tipo === 'success' ? 'bg-success' : 'bg-danger';
-        const notificationDiv = document.createElement('div');
-        notificationDiv.className = `position-fixed top-0 end-0 m-3 ${color} text-white px-3 py-2 rounded shadow`;
-        notificationDiv.style.zIndex = '9999';
-        notificationDiv.textContent = mensaje;
-        document.body.appendChild(notificationDiv);
-        
-        setTimeout(() => {
-            if (notificationDiv.parentNode) {
-                notificationDiv.parentNode.removeChild(notificationDiv);
-            }
-        }, 3000);
     }
     
     // Efecto hover para las cards
