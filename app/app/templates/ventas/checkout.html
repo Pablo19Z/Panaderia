@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="brand-title display-5 mb-4">Finalizar Compra</h1>
+            
+            <form method="POST" action="{{ url_for('procesar_pago') }}">
+                <!-- Información de Entrega -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-truck me-2"></i>Información de Entrega
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="direccion_entrega" class="form-label">Dirección de Entrega *</label>
+                                <textarea class="form-control" id="direccion_entrega" name="direccion_entrega" 
+                                          rows="3" required placeholder="Ingresa tu dirección completa...">{{ usuario.direccion or '' }}</textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono_contacto" class="form-label">Teléfono de Contacto *</label>
+                                <input type="tel" class="form-control" id="telefono_contacto" name="telefono_contacto" 
+                                       required placeholder="Ej: +1234567890" value="{{ usuario.telefono or '' }}">
+                                
+                                <label for="notas" class="form-label mt-3">Notas Especiales</label>
+                                <textarea class="form-control" id="notas" name="notas" rows="2" 
+                                          placeholder="Instrucciones especiales para la entrega..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Método de Pago -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-credit-card me-2"></i>Método de Pago
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="metodo_pago" id="efectivo" value="efectivo" checked>
+                                    <label class="form-check-label" for="efectivo">
+                                        <i class="fas fa-money-bill-wave me-2"></i>Pago en Efectivo (Contra Entrega)
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="metodo_pago" id="tarjeta" value="tarjeta">
+                                    <label class="form-check-label" for="tarjeta">
+                                        <i class="fas fa-credit-card me-2"></i>Tarjeta de Crédito/Débito
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="metodo_pago" id="transferencia" value="transferencia">
+                                    <label class="form-check-label" for="transferencia">
+                                        <i class="fas fa-university me-2"></i>Transferencia Bancaria
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Nota:</strong> Por el momento solo aceptamos pago en efectivo contra entrega. 
+                            Próximamente habilitaremos otros métodos de pago.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('ver_carrito') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al Carrito
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                        <i class="fas fa-check me-2"></i>Confirmar Pedido
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card sticky-top" style="top: 100px;">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shopping-bag me-2"></i>Tu Pedido
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for item in items %}
+                    <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">{{ item[5] }}</h6>
+                            <small class="text-muted">Cantidad: {{ item[3] }}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">${{ "%.2f"|format(item[3] * item[6]) }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>${{ "%.2f"|format(total) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Envío:</span>
+                        <span class="text-success">Gratis</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total:</strong>
+                        <strong class="text-primary fs-4">${{ "%.2f"|format(total) }}</strong>
+                    </div>
+                    
+                    <div class="bg-dark p-3 rounded">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            <strong>Compra Segura:</strong><br>
+                            • Productos frescos garantizados<br>
+                            • Entrega en 24-48 horas<br>
+                            • Satisfacción garantizada
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Validación del formulario
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const direccion = document.getElementById('direccion_entrega').value.trim();
+        const telefono = document.getElementById('telefono_contacto').value.trim();
+        
+        if (!direccion || !telefono) {
+            e.preventDefault();
+            mostrarNotificacion('Por favor completa todos los campos obligatorios', 'error');
+            return false;
+        }
+        
+        // Confirmar pedido
+        if (!confirm('¿Estás seguro de que quieres confirmar este pedido?')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+</script>
+{% endblock %}
