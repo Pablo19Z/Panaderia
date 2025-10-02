@@ -22,7 +22,6 @@ wheels/
 MANIFEST
 
 # Flask
-instance/
 .webassets-cache
 
 # Base de datos
