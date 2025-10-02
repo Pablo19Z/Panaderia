@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Dashboard - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background-color: var(--dark-bg); min-height: 100vh; color: var(--text-light);">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 p-0">
+            <div class="d-flex flex-column vh-100" style="background-color: var(--darker-bg);">
+                <!-- Profile Section -->
+                <!-- Cambiando color azul a #3998b8 -->
+                <div class="text-center p-3" style="border: 2px solid var(--primary-color); margin: 10px; border-radius: 8px;">
+                    <div class="position-relative d-inline-block mb-2">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 80px; height: 80px; background-color: #3998b8; color: white;">
+                            <i class="fas fa-user fa-2x"></i>
+                        </div>
+                    </div>
+                    <h5 class="mb-1" style="color: white; font-size: 1.1rem; font-weight: 600;">{{ usuario.nombre }}</h5>
+                    <p class="mb-2" style="color: #ccc; font-size: 0.95rem;">{{ usuario.email }}</p>
+                    <span class="badge" style="background-color: #3998b8; color: white; font-size: 0.8rem; padding: 6px 12px;">Cliente</span>
+                </div>
+
+                <!-- Navigation -->
+                <!-- Removed historial tab and kept only essential tabs -->
+                <nav class="flex-grow-1 px-2">
+                    <div class="nav nav-pills flex-column" id="cliente-tabs" role="tablist">
+                        <button class="nav-link active mb-1 text-start" id="pedidos-tab" data-bs-toggle="pill" 
+                                data-bs-target="#pedidos" type="button" role="tab" 
+                                style="background-color: #3998b8; color: white; border: none; font-weight: 500; font-size: 1.1rem; padding: 12px 16px;">
+                            <i class="fas fa-shopping-bag me-3" style="font-size: 1.2rem;"></i>Mis Pedidos
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="perfil-tab" data-bs-toggle="pill" 
+                                data-bs-target="#perfil" type="button" role="tab"
+                                style="color: #333; border: none; background-color: white; font-size: 1.1rem; padding: 12px 16px;">
+                            <i class="fas fa-user me-3" style="font-size: 1.2rem;"></i>Mi Perfil
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="configuracion-tab" data-bs-toggle="pill" 
+                                data-bs-target="#configuracion" type="button" role="tab"
+                                style="color: #333; border: none; background-color: white; font-size: 1.1rem; padding: 12px 16px;">
+                            <i class="fas fa-cog me-3" style="font-size: 1.2rem;"></i>Configuración
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="soporte-tab" data-bs-toggle="pill" 
+                                data-bs-target="#soporte" type="button" role="tab"
+                                style="color: #333; border: none; background-color: white; font-size: 1.1rem; padding: 12px 16px;">
+                            <i class="fas fa-headset me-3" style="font-size: 1.2rem;"></i>Soporte
+                        </button>
+                    </div>
+                </nav>
+
+                <!-- Reduciendo padding del footer -->
+                <div class="mt-auto p-2" style="border-top: 1px solid #333;">
+                    <h6 style="color: var(--primary-color); font-size: 0.9rem; margin-bottom: 5px;">Migas de oro Dorè</h6>
+                    <p style="color: #999; font-size: 0.75rem; margin: 0;">Panadería artesanal con los mejores ingredientes y tradición familiar.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <!-- Reduciendo aún más el padding inferior para acercar el footer -->
+        <div class="col-md-9 col-lg-10 p-3" style="padding-bottom: 0.5rem !important;">
+            <div class="tab-content" id="cliente-tabContent">
+                <!-- Enhanced Mis Pedidos tab with better design and functionality from historial -->
+                <div class="tab-pane fade show active" id="pedidos" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 style="color: white; font-size: 2rem; margin: 0; font-family: 'Dancing Script', cursive; font-style: italic;">
+                            Mis Pedidos
+                        </h1>
+                        <a href="{{ url_for('productos.catalogo') }}" class="btn" style="background-color: var(--primary-color); color: var(--dark-bg);">
+                            <i class="fas fa-plus me-1"></i>Nuevo Pedido
+                        </a>
+                    </div>
+
+                    {% if pedidos %}
+                    <div class="row g-4">
+                        {% for pedido in pedidos %}
+                        <div class="col-12">
+                            <!-- Improved card design with better spacing and typography -->
+                            <div class="card" style="background-color: #2a2a2a; border: 1px solid #444; border-radius: 12px;">
+                                <div class="card-body p-4">
+                                    <div class="row align-items-center">
+                                        <!-- Enhanced order information display with better labels and larger text -->
+                                        <div class="col-md-2">
+                                            <div class="d-flex flex-column">
+                                                <span style="color: #999; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Pedido</span>
+                                                <h5 class="mb-1" style="color: var(--primary-color); font-weight: bold; font-size: 1.3rem;">Pedido #{{ pedido.id }}</h5>
+                                                <span style="color: #999; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-top: 8px;">Fecha</span>
+                                                <small style="color: var(--text-light); font-size: 0.95rem;">
+                                                    {% if pedido.fecha_pedido %}
+                                                        {% if pedido.fecha_pedido.strftime %}
+                                                            {{ pedido.fecha_pedido.strftime('%d/%m/%Y %H:%M') }}
+                                                        {% else %}
+                                                            {{ pedido.fecha_pedido }}
+                                                        {% endif %}
+                                                    {% else %}
+                                                        Sin fecha
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="d-flex flex-column">
+                                                <span style="color: #999; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Total</span>
+                                                <!-- Updated price format to show Colombian pesos without COP suffix -->
+                                                <div class="fw-bold" style="color: var(--primary-color); font-size: 1.4rem;">${{ "{:,.0f}".format(pedido.total).replace(",", ".") }}</div>
+                                                <span style="color: #999; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-top: 8px;">Método de Pago</span>
+                                                <small style="color: var(--text-light); font-size: 0.95rem;">
+                                                    {% if pedido.metodo_pago == 'nequi' %}
+                                                        Nequi
+                                                    {% elif pedido.metodo_pago == 'efectivo' %}
+                                                        Efectivo
+                                                    {% else %}
+                                                        {{ pedido.metodo_pago|title }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="d-flex flex-column">
+                                                <span style="color: #999; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Estado</span>
+                                                {% if pedido.estado == 'pendiente' %}
+                                                    <span class="badge bg-warning text-dark" style="font-size: 0.9rem; padding: 8px 12px; margin-top: 4px;">Pendiente</span>
+                                                {% elif pedido.estado == 'preparando' %}
+                                                    <span class="badge bg-info" style="font-size: 0.9rem; padding: 8px 12px; margin-top: 4px;">Preparando</span>
+                                                {% elif pedido.estado == 'listo' %}
+                                                    <span class="badge bg-success" style="font-size: 0.9rem; padding: 8px 12px; margin-top: 4px;">Listo</span>
+                                                {% elif pedido.estado == 'entregado' %}
+                                                    <span class="badge bg-primary" style="font-size: 0.9rem; padding: 8px 12px; margin-top: 4px;">Entregado</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger" style="font-size: 0.9rem; padding: 8px 12px; margin-top: 4px;">Cancelado</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="d-flex flex-column">
+                                                <span style="color: #999; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Dirección de Entrega</span>
+                                                <small style="color: var(--text-light); font-size: 0.95rem; line-height: 1.4;">{{ pedido.direccion_entrega or 'Sin dirección especificada' }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 text-end">
+                                            <!-- Improved button design with better spacing and sizing -->
+                                            <div class="d-flex flex-column gap-2">
+                                                <button class="btn btn-outline-light" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 8px;" onclick="verDetallePedido({{ pedido.id }})">
+                                                    <i class="fas fa-eye me-2"></i>Ver Detalles
+                                                </button>
+                                                <button class="btn" style="background-color: var(--primary-color); color: var(--dark-bg); padding: 10px 20px; font-size: 0.9rem; border-radius: 8px;" onclick="descargarRecibo({{ pedido.id }})">
+                                                    <i class="fas fa-download me-2"></i>Descargar PDF
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if pedido.notas %}
+                                    <div class="row mt-3">
+                                        <div class="col-12">
+                                            <div class="alert alert-info" style="background-color: #1a4d5c; border-color: #3998b8; color: #ccc; border-radius: 8px;">
+                                                <i class="fas fa-sticky-note me-2"></i>
+                                                <strong>Notas:</strong> {{ pedido.notas }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-shopping-bag fa-4x" style="color: var(--text-muted);"></i>
+                        </div>
+                        <h4 style="color: var(--text-muted);">No tienes pedidos aún</h4>
+                        <p style="color: var(--text-muted);">¡Haz tu primer pedido y disfruta de nuestros productos!</p>
+                        <a href="{{ url_for('productos.catalogo') }}" class="btn btn-primary">
+                            <i class="fas fa-cookie-bite me-2"></i>Ver Productos
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Perfil Tab -->
+                <div class="tab-pane fade" id="perfil" role="tabpanel">
+                    <!-- Cambiando tipografía del título a cursiva como Migas de oro -->
+                    <h1 style="color: white; font-size: 2rem; margin-bottom: 1rem; font-family: 'Dancing Script', cursive; font-style: italic;">
+                        Mi Perfil
+                    </h1>
+
+                    <!-- Aumentando tamaño de iconos en tarjetas de estadísticas y reduciendo ancho de tabla -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <div class="card h-100" style="min-height: 120px;">
+                                <div class="card-body text-center py-2">
+                                    <div class="mb-2">
+                                        <i class="fas fa-shopping-bag fa-2x" style="color: #3998b8;"></i>
+                                    </div>
+                                    <h4 style="color: var(--text-light); font-size: 1.5rem;">{{ pedidos|length or 0 }}</h4>
+                                    <p style="color: var(--text-muted); margin: 0; font-size: 0.85rem;">Pedidos Realizados</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100" style="min-height: 120px;">
+                                <div class="card-body text-center py-2">
+                                    <div class="mb-2">
+                                        <i class="fas fa-heart fa-2x" style="color: #e91e63;"></i>
+                                    </div>
+                                    <h4 style="color: var(--text-light); font-size: 1.5rem;">{{ favoritos|length or 0 }}</h4>
+                                    <p style="color: var(--text-muted); margin: 0; font-size: 0.85rem;">Productos Favoritos</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100" style="min-height: 120px;">
+                                <div class="card-body text-center py-2">
+                                    <div class="mb-2">
+                                        <i class="fas fa-calendar fa-2x" style="color: #4CAF50;"></i>
+                                    </div>
+                                    <h4 style="color: var(--text-light); font-size: 1.5rem;">Cliente</h4>
+                                    <p style="color: var(--text-muted); margin: 0; font-size: 0.85rem;">Desde 2024</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Haciendo la tabla de información personal más grande -->
+                    <div class="row justify-content-center mb-3">
+                        <div class="col-10">
+                            <div class="card">
+                                <div class="card-header" style="background-color: #333; color: white;">
+                                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Información Personal</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="nombre" class="form-label" style="color: var(--text-light);">Nombre Completo</label>
+                                                <input type="text" class="form-control" id="nombre" value="{{ usuario.nombre }}" readonly>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="email" class="form-label" style="color: var(--text-light);">Email</label>
+                                                <input type="email" class="form-control" id="email" value="{{ usuario.email }}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="telefono" class="form-label" style="color: var(--text-light);">Teléfono</label>
+                                                <input type="tel" class="form-control" id="telefono" value="{{ usuario.telefono or '' }}" readonly>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="direccion" class="form-label" style="color: var(--text-light);">Dirección</label>
+                                                <input type="text" class="form-control" id="direccion" value="{{ usuario.direccion or '' }}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="tipoUsuario" class="form-label" style="color: var(--text-light);">Tipo de Usuario</label>
+                                                <input type="text" class="form-control" id="tipoUsuario" value="Cliente" readonly>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="estadoCuenta" class="form-label" style="color: var(--text-light);">Estado de la Cuenta</label>
+                                                <input type="text" class="form-control" id="estadoCuenta" value="Activa" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Para actualizar tu información de perfil, contacta con nuestro equipo de soporte.
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agregando sección Preferencias de Cuenta en Mi Perfil -->
+                    <div class="row justify-content-center">
+                        <div class="col-10">
+                            <div class="card">
+                                <div class="card-header" style="background-color: #333; color: white;">
+                                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Preferencias de Cuenta</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="notifEmailPerfil" checked>
+                                                <label class="form-check-label" for="notifEmailPerfil" style="color: var(--text-light);">
+                                                    Recibir notificaciones por email
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="notifPromosPerfil" checked>
+                                                <label class="form-check-label" for="notifPromosPerfil" style="color: var(--text-light);">
+                                                    Recibir ofertas y promociones
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración Tab -->
+                <div class="tab-pane fade" id="configuracion" role="tabpanel">
+                    <!-- Cambiando tipografía del título a cursiva -->
+                    <h1 style="color: white; font-size: 2rem; margin-bottom: 1rem; font-family: 'Dancing Script', cursive; font-style: italic;">
+                        Configuración de Cuenta
+                    </h1>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <!-- Cambiando header de gris oscuro -->
+                                <div class="card-header" style="background-color: #333; color: white;">
+                                    <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Notificaciones</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notifEmail" checked>
+                                        <label class="form-check-label" for="notifEmail" style="color: var(--text-light);">
+                                            Recibir notificaciones por email
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="notifPedidos" checked>
+                                        <label class="form-check-label" for="notifPedidos" style="color: var(--text-light);">
+                                            Recibir ofertas y promociones
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <!-- Cambiando header de gris oscuro -->
+                                <div class="card-header" style="background-color: #333; color: white;">
+                                    <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Privacidad</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="perfilPublico">
+                                        <label class="form-check-label" for="perfilPublico" style="color: var(--text-light);">
+                                            Perfil público
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="compartirDatos">
+                                        <label class="form-check-label" for="compartirDatos" style="color: var(--text-light);">
+                                            Compartir datos para mejoras
+                                        </label>
+                                    </div>
+                                    <button class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash me-1"></i>Eliminar cuenta
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soporte Tab -->
+                <div class="tab-pane fade" id="soporte" role="tabpanel">
+                    <!-- Cambiando tipografía del título a cursiva -->
+                    <h1 style="color: white; font-size: 2rem; margin-bottom: 1rem; font-family: 'Dancing Script', cursive; font-style: italic;">
+                        Centro de Soporte
+                    </h1>
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <!-- Cambiando header de gris oscuro -->
+                                <div class="card-header" style="background-color: #333; color: white;">
+                                    <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>¿Necesitas ayuda?</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="asunto" class="form-label" style="color: var(--text-light);">Asunto</label>
+                                            <select class="form-select" id="asunto">
+                                                <option value="">Selecciona un asunto</option>
+                                                <option value="problema-pedido">Problema con pedido</option>
+                                                <option value="problema-pago">Problema de pago</option>
+                                                <option value="sugerencia">Sugerencia</option>
+                                                <option value="otro">Otro</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="mensaje" class="form-label" style="color: var(--text-light);">Mensaje</label>
+                                            <textarea class="form-control" id="mensaje" rows="4" placeholder="Describe tu consulta..."></textarea>
+                                        </div>
+                                        <button type="button" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane me-2"></i>Enviar Consulta
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <!-- Cambiando header de gris oscuro -->
+                                <div class="card-header" style="background-color: #333; color: white;">
+                                    <h5 class="mb-0"><i class="fas fa-phone me-2"></i>Contacto Directo</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <i class="fas fa-phone me-2" style="color: var(--primary-color);"></i>
+                                        <span style="color: var(--text-light);">+57 300 123 4567</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <i class="fas fa-envelope me-2" style="color: var(--primary-color);"></i>
+                                        <span style="color: var(--text-light);">soporte@migasdeorodoré.com</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <i class="fas fa-clock me-2" style="color: var(--primary-color);"></i>
+                                        <span style="color: var(--text-light);">Lun-Vie: 8AM-6PM</span>
+                                    </div>
+                                    <hr style="border-color: var(--primary-color);">
+                                    <h6 style="color: var(--primary-color);">Preguntas Frecuentes</h6>
+                                    <div class="mb-2">
+                                        <a href="#" style="color: #3998b8; text-decoration: none;">¿Cómo hacer un pedido?</a>
+                                    </div>
+                                    <div class="mb-2">
+                                        <a href="#" style="color: #3998b8; text-decoration: none;">Tiempos de entrega</a>
+                                    </div>
+                                    <div class="mb-2">
+                                        <a href="#" style="color: #3998b8; text-decoration: none;">Métodos de pago</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function verDetallePedido(pedidoId) {
+        alert(`Ver detalle del pedido #${pedidoId} - Funcionalidad próximamente`);
+    }
+
+    function descargarRecibo(pedidoId) {
+        // Create a temporary link to download the receipt
+        const link = document.createElement('a');
+        link.href = `/api/pedido/${pedidoId}/recibo-pdf`;
+        link.download = `recibo-pedido-${pedidoId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const navButtons = document.querySelectorAll('#cliente-tabs .nav-link');
+        navButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                navButtons.forEach(btn => {
+                    btn.style.backgroundColor = 'white';
+                    btn.style.color = '#333';
+                    btn.style.border = 'none';
+                });
+                this.style.backgroundColor = '#3998b8';
+                this.style.color = 'white';
+                this.style.border = 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

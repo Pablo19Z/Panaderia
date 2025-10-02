@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Favoritos - Panadería Migas de Oro{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-5">
+        <h1 class="mb-2" style="color: var(--primary-color); font-size: 2.5rem; font-weight: 700;">
+            <i class="fas fa-heart me-3"></i>Mis Favoritos
+        </h1>
+        <p style="color: var(--text-muted); font-size: 1rem;">
+            Tus productos favoritos guardados
+        </p>
+    </div>
+    
+    {% if productos %}
+        <div class="row g-4">
+            {% for producto in productos %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100" style="background-color: var(--darker-bg); border: 1px solid var(--primary-color); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                    <!-- Smaller contained image -->
+                    <div style="height: 220px; overflow: hidden; position: relative;">
+                        <img src="{{ producto.imagen_url or '/placeholder.svg?height=220&width=400&query=' + producto.nombre }}" 
+                             alt="{{ producto.nombre }}" 
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    
+                    <div class="card-body d-flex flex-column p-4">
+                        <h5 class="mb-2" style="color: var(--text-light); font-weight: 600; font-size: 1.1rem;">
+                            {{ producto.nombre }}
+                        </h5>
+                        <p class="mb-3 flex-grow-1" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+                            {{ producto.descripcion[:80] if producto.descripcion and producto.descripcion|length > 80 else producto.descripcion }}
+                            {% if producto.descripcion and producto.descripcion|length > 80 %}...{% endif %}
+                        </p>
+                        
+                        <div class="mb-3 pb-3" style="border-bottom: 1px solid rgba(212, 165, 116, 0.2);">
+                            <span style="color: var(--primary-color); font-size: 1.5rem; font-weight: 700;">
+                                ${{ "%.2f"|format(producto.precio) }}
+                            </span>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button onclick="toggleFavorito({{ producto.id }}, this)" 
+                                    class="btn flex-shrink-0" 
+                                    style="background-color: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #dc3545; font-size: 0.9rem; padding: 0.6rem 1rem;">
+                                <i class="fas fa-heart-broken me-1"></i>Quitar
+                            </button>
+                            <button onclick="agregarAlCarrito({{ producto.id }})" 
+                                    class="btn flex-grow-1" 
+                                    style="background-color: var(--primary-color); color: var(--darker-bg); font-weight: 500; font-size: 0.9rem; padding: 0.6rem 1rem;">
+                                <i class="fas fa-shopping-cart me-1"></i>Agregar al Carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Updated empty state to match dark theme -->
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-heart" style="font-size: 5rem; color: var(--primary-color); opacity: 0.3;"></i>
+            </div>
+            <h3 class="mb-3" style="color: var(--text-light); font-size: 1.5rem; font-weight: 600;">
+                No tienes productos favoritos
+            </h3>
+            <p class="mb-4" style="color: var(--text-muted); font-size: 1rem;">
+                Explora nuestros productos y agrega tus favoritos
+            </p>
+            <a href="{{ url_for('productos.catalogo') }}" 
+               class="btn btn-lg" 
+               style="background-color: var(--primary-color); color: var(--darker-bg); font-weight: 500; padding: 0.8rem 2rem;">
+                <i class="fas fa-shopping-bag me-2"></i>Ver Productos
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Added hover effects for cards */
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(212, 165, 116, 0.3);
+    }
+</style>
+
+<script>
+function mostrarError(mensaje) {
+    // Create error notification
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50';
+    errorDiv.textContent = mensaje;
+    document.body.appendChild(errorDiv);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.parentNode.removeChild(errorDiv);
+        }
+    }, 3000);
+}
+
+function toggleFavorito(productoId, button) {
+    fetch('/api/favoritos/toggle', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            producto_id: productoId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // If removed from favorites, remove the card from the page
+            if (!data.es_favorito) {
+                const card = button.closest('.col-md-6');
+                if (card) {
+                    card.remove();
+                    
+                    // Check if no more favorites
+                    const remainingCards = document.querySelectorAll('.col-md-6.col-lg-4');
+                    if (remainingCards.length === 0) {
+                        location.reload(); // Reload to show empty state
+                    }
+                }
+            }
+        } else {
+            window.mostrarNotificacion(data.message || 'Error al gestionar favoritos', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        window.mostrarNotificacion('Error al gestionar favoritos', 'error');
+    });
+}
+
+function agregarAlCarrito(productoId) {
+    fetch('/api/carrito/agregar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            producto_id: productoId,
+            cantidad: 1
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update cart count in navbar
+            const cartBadge = document.querySelector('.badge');
+            if (cartBadge && data.carrito_count) {
+                cartBadge.textContent = data.carrito_count;
+            }
+            
+            // Show success message
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
+            successDiv.textContent = 'Producto agregado al carrito';
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.parentNode.removeChild(successDiv);
+                }
+            }, 3000);
+        } else {
+            window.mostrarNotificacion(data.message || 'Error al agregar al carrito', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        window.mostrarNotificacion('Error al agregar al carrito', 'error');
+    });
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const notificationDiv = document.createElement('div');
+    notificationDiv.className = `fixed top-4 right-4 px-4 py-2 rounded shadow-lg z-50 ${tipo === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`;
+    notificationDiv.textContent = mensaje;
+    document.body.appendChild(notificationDiv);
+    
+    setTimeout(() => {
+        if (notificationDiv.parentNode) {
+            notificationDiv.parentNode.removeChild(notificationDiv);
+        }
+    }, 3000);
+}
+</script>
+{% endblock %}

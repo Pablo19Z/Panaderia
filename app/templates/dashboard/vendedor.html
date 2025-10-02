@@ -1,0 +1,1308 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Vendedor - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<!-- Rediseñando completamente el dashboard del vendedor con el mismo estilo del admin -->
+<div class="container-fluid" style="background-color: #1a1a1a; min-height: 100vh; color: #ffffff;">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 p-0">
+            <div class="d-flex flex-column vh-100" style="background-color: #2d2d2d; border-right: 1px solid #4CAF50;">
+                <!-- Profile Section -->
+                <div class="text-center p-4" style="border-bottom: 1px solid #4CAF50;">
+                    <div class="position-relative d-inline-block mb-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 80px; height: 80px; background-color: #4CAF50; color: #ffffff;">
+                            <i class="fas fa-user-tie fa-2x"></i>
+                        </div>
+                    </div>
+                    <h5 class="mb-1" style="color: #ffffff;">
+                        <i class="fas fa-user me-2" style="color: #4CAF50;"></i>{{ usuario.nombre }}
+                    </h5>
+                    <p class="mb-2" style="color: #cccccc; font-size: 0.9rem;">{{ usuario.email }}</p>
+                    <span class="badge" style="background-color: #4CAF50; color: #ffffff;">Vendedor</span>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-grow-1">
+                    <div class="nav nav-pills flex-column p-3" id="vendedor-tabs" role="tablist">
+                        <button class="nav-link active mb-1 text-start" id="panel-ventas-tab" data-bs-toggle="pill" 
+                                data-bs-target="#panel-ventas" type="button" role="tab" 
+                                style="background-color: #4CAF50; color: #ffffff; border: none; padding: 12px 16px;">
+                            <i class="fas fa-cash-register me-2" style="font-size: 1.1rem;"></i>Panel de Ventas
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="pedidos-tab" data-bs-toggle="pill" 
+                                data-bs-target="#pedidos" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: #f8f9fa; color: #333; padding: 12px 16px;">
+                            <i class="fas fa-shopping-bag me-2" style="font-size: 1.1rem;"></i>Pedidos
+                            <span class="badge bg-warning float-end">{{ estadisticas.pedidos_pendientes or 0 }}</span>
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="ventas-tab" data-bs-toggle="pill" 
+                                data-bs-target="#ventas" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: #f8f9fa; color: #333; padding: 12px 16px;">
+                            <i class="fas fa-chart-line me-2" style="font-size: 1.1rem;"></i>Ventas
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="clientes-tab" data-bs-toggle="pill" 
+                                data-bs-target="#clientes" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: #f8f9fa; color: #333; padding: 12px 16px;">
+                            <i class="fas fa-users me-2" style="font-size: 1.1rem;"></i>Clientes
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="inventario-tab" data-bs-toggle="pill" 
+                                data-bs-target="#inventario" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: #f8f9fa; color: #333; padding: 12px 16px;">
+                            <i class="fas fa-boxes me-2" style="font-size: 1.1rem;"></i>Inventario
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="reportes-tab" data-bs-toggle="pill" 
+                                data-bs-target="#reportes" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: #f8f9fa; color: #333; padding: 12px 16px;">
+                            <i class="fas fa-chart-bar me-2" style="font-size: 1.1rem;"></i>Reportes
+                        </button>
+                        <!-- Agregando nueva sección de comprobantes Nequi -->
+                        <button class="nav-link mb-1 text-start" id="comprobantes-tab" data-bs-toggle="pill" 
+                                data-bs-target="#comprobantes" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: #f8f9fa; color: #333; padding: 12px 16px;">
+                            <i class="fas fa-receipt me-2" style="font-size: 1.1rem;"></i>Comprobantes Nequi
+                        </button>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 p-4">
+            <div class="tab-content" id="vendedor-tabContent">
+                <!-- Panel de Ventas Tab -->
+                <div class="tab-pane fade show active" id="panel-ventas" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h1 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 5px;">
+                                Panel de Ventas
+                            </h1>
+                            <p style="color: #888; margin: 0; font-size: 1rem;">Centro de control para vendedores - Migas de oro Dorè</p>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge" style="background-color: #4CAF50; color: #ffffff; padding: 8px 12px; font-size: 0.9rem;">
+                                <i class="fas fa-circle me-1" style="color: #81C784; font-size: 0.7rem;"></i>Vendedor Activo
+                            </div>
+                            <div class="mt-1">
+                                <small style="color: #cccccc;">Última actualización: {{ fecha_actual }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Métricas Principales -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="card h-100" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-body text-center p-3">
+                                    <div class="mb-2">
+                                        <i class="fas fa-shopping-cart fa-2x" style="color: #4CAF50;"></i>
+                                    </div>
+                                    <h3 style="color: #ffffff; margin-bottom: 5px;">{{ estadisticas.pedidos_pendientes or 0 }}</h3>
+                                    <p style="color: #cccccc; margin: 0; font-size: 0.9rem;">Pedidos Pendientes</p>
+                                    <small style="color: #4CAF50;">⏱ Tiempo real</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-body text-center p-3">
+                                    <div class="mb-2">
+                                        <i class="fas fa-dollar-sign fa-2x" style="color: #2196F3;"></i>
+                                    </div>
+                                    <h3 style="color: #ffffff; margin-bottom: 5px;">${{ "%.0f"|format(estadisticas.ventas_hoy.total or 0) }}</h3>
+                                    <p style="color: #cccccc; margin: 0; font-size: 0.9rem;">Ventas del Día</p>
+                                    <small style="color: #2196F3;">💰 Ingresos</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-body text-center p-3">
+                                    <div class="mb-2">
+                                        <i class="fas fa-users fa-2x" style="color: #FF9800;"></i>
+                                    </div>
+                                    <h3 style="color: #ffffff; margin-bottom: 5px;">{{ estadisticas.total_clientes or 0 }}</h3>
+                                    <p style="color: #cccccc; margin: 0; font-size: 0.9rem;">Clientes Registrados</p>
+                                    <small style="color: #FF9800;">👥 Base de datos</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100" style="background-color: #2d2d2d; border: 1px solid #9C27B0;">
+                                <div class="card-body text-center p-3">
+                                    <div class="mb-2">
+                                        <i class="fas fa-chart-line fa-2x" style="color: #9C27B0;"></i>
+                                    </div>
+                                    <h3 style="color: #ffffff; margin-bottom: 5px;">{{ estadisticas.ventas_mes.cantidad or 0 }}</h3>
+                                    <p style="color: #cccccc; margin: 0; font-size: 0.9rem;">Ventas del Mes</p>
+                                    <small style="color: #9C27B0;">📈 Tendencia</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Control Operativo -->
+                    <div class="row g-4 mb-3">
+                        <div class="col-md-8">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-header" style="background-color: #388E3C; color: #ffffff; border-bottom: 1px solid #4CAF50;">
+                                    <h5 class="mb-0" style="font-family: 'Dancing Script', cursive; font-size: 1.4rem;">
+                                        <i class="fas fa-cash-register me-2"></i>Centro de Ventas
+                                    </h5>
+                                    <small style="color: #E8F5E8;">Acciones rápidas para gestión de ventas</small>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <button class="btn w-100" style="background-color: #4CAF50; color: #ffffff; padding: 15px; border: 1px solid #66BB6A;" onclick="alert('Funcionalidad próximamente')">
+                                                <i class="fas fa-plus me-2"></i>Nuevo Pedido<br>
+                                                <small style="opacity: 0.9;">Crear pedido manual</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn w-100" style="background-color: #2196F3; color: #ffffff; padding: 15px; border: 1px solid #42A5F5;" onclick="alert('Funcionalidad próximamente')">
+                                                <i class="fas fa-search me-2"></i>Buscar Cliente<br>
+                                                <small style="opacity: 0.9;">Historial y datos</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn w-100" style="background-color: #FF9800; color: #ffffff; padding: 15px; border: 1px solid #FFB74D;" onclick="alert('Funcionalidad próximamente')">
+                                                <i class="fas fa-calculator me-2"></i>Calculadora<br>
+                                                <small style="opacity: 0.9;">Precios y descuentos</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn w-100" style="background-color: #9C27B0; color: #ffffff; padding: 15px; border: 1px solid #BA68C8;" onclick="alert('Funcionalidad próximamente')">
+                                                <i class="fas fa-print me-2"></i>Imprimir Ticket<br>
+                                                <small style="opacity: 0.9;">Recibos y facturas</small>
+                                            </button>
+                                        </div>
+                                        <!-- Agregando dos nuevas opciones para gestión de productos -->
+                                        <div class="col-md-6">
+                                            <a href="{{ url_for('productos.crear_producto') }}" class="btn w-100" style="background-color: #00BCD4; color: #ffffff; padding: 15px; border: 1px solid #26C6DA; text-decoration: none; display: block;">
+                                                <i class="fas fa-plus-circle me-2"></i>Agregar Producto<br>
+                                                <small style="opacity: 0.9;">Nuevo al inventario</small>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a href="{{ url_for('productos.gestionar_productos') }}" class="btn w-100" style="background-color: #795548; color: #ffffff; padding: 15px; border: 1px solid #8D6E63; text-decoration: none; display: block;">
+                                                <i class="fas fa-cogs me-2"></i>Gestionar Productos<br>
+                                                <small style="opacity: 0.9;">Editar y eliminar</small>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-header" style="background-color: #1976D2; color: #ffffff;">
+                                    <h5 class="mb-0" style="font-family: 'Dancing Script', cursive; font-size: 1.4rem;">
+                                        <i class="fas fa-bell me-2"></i>Notificaciones
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert" style="background-color: #E3F2FD; color: #0D47A1; border: 1px solid #42A5F5; margin-bottom: 10px; padding: 10px;">
+                                        <i class="fas fa-clock me-2"></i>{{ estadisticas.pedidos_pendientes or 0 }} pedidos pendientes
+                                    </div>
+                                    <div class="alert" style="background-color: #E8F5E8; color: #2E7D32; border: 1px solid #66BB6A; margin-bottom: 10px; padding: 10px;">
+                                        <i class="fas fa-dollar-sign me-2"></i>Meta diaria: 80%
+                                    </div>
+                                    <div class="alert" style="background-color: #FFF3E0; color: #E65100; border: 1px solid #FFB74D; margin-bottom: 0; padding: 10px;">
+                                        <i class="fas fa-boxes me-2"></i>Stock bajo: 2 productos
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pedidos Tab -->
+                <div class="tab-pane fade" id="pedidos" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">Gestión de Pedidos</h2>
+                            <p style="color: #ffffff; margin: 0;">Control y seguimiento de pedidos de clientes</p>
+                        </div>
+                        <button class="btn" style="background-color: #4CAF50; color: #ffffff; border: 1px solid #66BB6A;" onclick="location.reload()">
+                            <i class="fas fa-sync me-1"></i>Actualizar
+                        </button>
+                    </div>
+
+                    <!-- Agregando más contenido visual y estadísticas detalladas -->
+                    <!-- Gráfico de rendimiento diario -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-8">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-header" style="background-color: #388E3C; color: #ffffff;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-chart-area me-2"></i>Rendimiento de Pedidos - Últimos 7 Días
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center py-4">
+                                        <canvas id="pedidosChart" width="400" height="200" style="background: linear-gradient(45deg, #1a1a1a, #2d2d2d); border-radius: 8px; padding: 20px;"></canvas>
+                                        <script>
+                                            // Simulando gráfico con CSS y elementos visuales
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                const canvas = document.getElementById('pedidosChart');
+                                                const ctx = canvas.getContext('2d');
+                                                
+                                                // Datos simulados para el gráfico
+                                                const datos = [12, 19, 8, 15, 22, 18, 25];
+                                                const dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+                                                
+                                                // Configuración del gráfico
+                                                ctx.strokeStyle = '#4CAF50';
+                                                ctx.fillStyle = 'rgba(76, 175, 80, 0.2)';
+                                                ctx.lineWidth = 3;
+                                                
+                                                // Dibujar líneas de fondo
+                                                ctx.strokeStyle = '#444';
+                                                ctx.lineWidth = 1;
+                                                for(let i = 0; i < 5; i++) {
+                                                    const y = 50 + (i * 30);
+                                                    ctx.beginPath();
+                                                    ctx.moveTo(50, y);
+                                                    ctx.lineTo(350, y);
+                                                    ctx.stroke();
+                                                }
+                                                
+                                                // Dibujar gráfico de línea
+                                                ctx.strokeStyle = '#4CAF50';
+                                                ctx.lineWidth = 3;
+                                                ctx.beginPath();
+                                                
+                                                datos.forEach((valor, index) => {
+                                                    const x = 50 + (index * 45);
+                                                    const y = 200 - (valor * 5);
+                                                    
+                                                    if(index === 0) {
+                                                        ctx.moveTo(x, y);
+                                                    } else {
+                                                        ctx.lineTo(x, y);
+                                                    }
+                                                    
+                                                    // Puntos
+                                                    ctx.fillStyle = '#4CAF50';
+                                                    ctx.beginPath();
+                                                    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                                                    ctx.fill();
+                                                });
+                                                
+                                                ctx.stroke();
+                                                
+                                                // Etiquetas de días
+                                                ctx.fillStyle = '#ffffff';
+                                                ctx.font = '12px Arial';
+                                                ctx.textAlign = 'center';
+                                                dias.forEach((dia, index) => {
+                                                    const x = 50 + (index * 45);
+                                                    ctx.fillText(dia, x, 220);
+                                                });
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-header" style="background-color: #1976D2; color: #ffffff;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-trophy me-2"></i>Logros del Día
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span style="color: #ffffff;">Meta Diaria</span>
+                                            <span style="color: #4CAF50;">85%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px; background-color: #444;">
+                                            <div class="progress-bar" style="width: 85%; background-color: #4CAF50;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span style="color: #ffffff;">Satisfacción</span>
+                                            <span style="color: #2196F3;">92%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px; background-color: #444;">
+                                            <div class="progress-bar" style="width: 92%; background-color: #2196F3;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div class="badge" style="background-color: #FF9800; color: #ffffff; padding: 8px 12px;">
+                                            <i class="fas fa-star me-1"></i>Vendedor Destacado
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estados de Pedidos -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-clock fa-2x mb-2" style="color: #FF9800;"></i>
+                                    <h4 style="color: #ffffff;">{{ estadisticas.pedidos_pendientes or 0 }}</h4>
+                                    <p style="color: #cccccc; margin: 0;">Pendientes</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-cog fa-2x mb-2" style="color: #2196F3;"></i>
+                                    <h4 style="color: #ffffff;">{{ estadisticas.pedidos_preparando or 0 }}</h4>
+                                    <p style="color: #cccccc; margin: 0;">Preparando</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-check-circle fa-2x mb-2" style="color: #4CAF50;"></i>
+                                    <h4 style="color: #ffffff;">{{ estadisticas.pedidos_listos or 0 }}</h4>
+                                    <p style="color: #cccccc; margin: 0;">Listos</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #9C27B0;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-truck fa-2x mb-2" style="color: #9C27B0;"></i>
+                                    <h4 style="color: #ffffff;">0</h4>
+                                    <p style="color: #cccccc; margin: 0;">Entregados</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Pedidos -->
+                    {% if pedidos_pendientes %}
+                    <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                        <div class="card-header" style="background-color: #388E3C; color: #ffffff;">
+                            <h5 class="mb-0">Pedidos Activos</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                {% for pedido in pedidos_pendientes %}
+                                <div class="col-12">
+                                    <div class="card" style="background-color: #1a1a1a; border: 1px solid #444;">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-2">
+                                                    <h5 class="mb-0" style="color: #4CAF50;">Pedido #{{ pedido[0] }}</h5>
+                                                    <small class="text-muted">{{ pedido[5] }}</small>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <strong style="color: #ffffff;">{{ pedido[8] or 'Cliente' }}</strong>
+                                                    <br><small class="text-muted">Cliente</small>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="fw-bold" style="color: #4CAF50;">${{ "%.2f"|format(pedido[2]) }}</div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    {% if pedido[3] == 'pendiente' %}
+                                                        <span class="badge" style="background-color: #FF9800;">Pendiente</span>
+                                                    {% elif pedido[3] == 'preparando' %}
+                                                        <span class="badge" style="background-color: #2196F3;">Preparando</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                                        {{ (pedido[6] or 'Dirección')[:30] }}...
+                                                    </small>
+                                                </div>
+                                                <div class="col-md-2 text-end">
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary" onclick="verDetallePedido({{ pedido[0] }})">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        {% if pedido[3] == 'pendiente' %}
+                                                        <button class="btn btn-success" onclick="cambiarEstadoPedido({{ pedido[0] }}, 'preparando')">
+                                                            <i class="fas fa-play"></i>
+                                                        </button>
+                                                        {% elif pedido[3] == 'preparando' %}
+                                                        <button class="btn btn-warning" onclick="cambiarEstadoPedido({{ pedido[0] }}, 'listo')">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-clipboard-check fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No hay pedidos pendientes</h4>
+                        <p class="text-muted">Todos los pedidos están al día</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Ventas Tab -->
+                <div class="tab-pane fade" id="ventas" role="tabpanel">
+                    <div class="mb-4">
+                        <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">Reporte de Ventas</h2>
+                        <p style="color: #ffffff; margin: 0;">Análisis de ingresos y rendimiento</p>
+                    </div>
+
+                    <!-- Agregando gráficos de ventas y análisis detallado -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-header" style="background-color: #388E3C; color: #ffffff;">
+                                    <h5 class="mb-0">Ingresos del Día</h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h3 style="color: #4CAF50;">${{ "%.0f"|format(estadisticas.ventas_hoy.total or 0) }}</h3>
+                                    <p style="color: #cccccc;">{{ estadisticas.ventas_hoy.cantidad or 0 }} pedidos completados</p>
+                                    <div class="mt-3">
+                                        <small style="color: #4CAF50;">
+                                            <i class="fas fa-arrow-up me-1"></i>+15% vs ayer
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-header" style="background-color: #1976D2; color: #ffffff;">
+                                    <h5 class="mb-0">Ingresos del Mes</h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h3 style="color: #2196F3;">${{ "%.0f"|format(estadisticas.ventas_mes.total or 0) }}</h3>
+                                    <p style="color: #cccccc;">{{ estadisticas.ventas_mes.cantidad or 0 }} pedidos del mes</p>
+                                    <div class="mt-3">
+                                        <small style="color: #2196F3;">
+                                            <i class="fas fa-arrow-up me-1"></i>+8% vs mes anterior
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-header" style="background-color: #F57C00; color: #ffffff;">
+                                    <h5 class="mb-0">Promedio Diario</h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h3 style="color: #FF9800;">${{ "%.0f"|format((estadisticas.ventas_mes.total or 0) / 30) }}</h3>
+                                    <p style="color: #cccccc;">Promedio por día</p>
+                                    <div class="mt-3">
+                                        <small style="color: #FF9800;">
+                                            <i class="fas fa-chart-line me-1"></i>Tendencia estable
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de ventas por categoría -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-8">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #9C27B0;">
+                                <div class="card-header" style="background-color: #7B1FA2; color: #ffffff;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-chart-pie me-2"></i>Ventas por Categoría
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div style="width: 20px; height: 20px; background-color: #4CAF50; border-radius: 3px; margin-right: 10px;"></div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span style="color: #ffffff;">Panes</span>
+                                                        <span style="color: #4CAF50;">45%</span>
+                                                    </div>
+                                                    <div class="progress mt-1" style="height: 6px; background-color: #444;">
+                                                        <div class="progress-bar" style="width: 45%; background-color: #4CAF50;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div style="width: 20px; height: 20px; background-color: #2196F3; border-radius: 3px; margin-right: 10px;"></div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span style="color: #ffffff;">Pasteles</span>
+                                                        <span style="color: #2196F3;">30%</span>
+                                                    </div>
+                                                    <div class="progress mt-1" style="height: 6px; background-color: #444;">
+                                                        <div class="progress-bar" style="width: 30%; background-color: #2196F3;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <div style="width: 20px; height: 20px; background-color: #FF9800; border-radius: 3px; margin-right: 10px;"></div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span style="color: #ffffff;">Bebidas</span>
+                                                        <span style="color: #FF9800;">25%</span>
+                                                    </div>
+                                                    <div class="progress mt-1" style="height: 6px; background-color: #444;">
+                                                        <div class="progress-bar" style="width: 25%; background-color: #FF9800;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="text-center">
+                                                <div style="width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#4CAF50 0deg 162deg, #2196F3 162deg 270deg, #FF9800 270deg 360deg); margin: 0 auto; position: relative;">
+                                                    <div style="width: 80px; height: 80px; background-color: #2d2d2d; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center;">
+                                                        <span style="color: #ffffff; font-weight: bold;">100%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #E91E63;">
+                                <div class="card-header" style="background-color: #C2185B; color: #ffffff;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-fire me-2"></i>Productos Top
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong style="color: #ffffff;">Pan Integral</strong>
+                                                <br><small style="color: #cccccc;">23 vendidos</small>
+                                            </div>
+                                            <div class="badge" style="background-color: #4CAF50;">
+                                                <i class="fas fa-crown"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong style="color: #ffffff;">Croissant</strong>
+                                                <br><small style="color: #cccccc;">18 vendidos</small>
+                                            </div>
+                                            <div class="badge" style="background-color: #2196F3;">
+                                                2°
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong style="color: #ffffff;">Café Americano</strong>
+                                                <br><small style="color: #cccccc;">15 vendidos</small>
+                                            </div>
+                                            <div class="badge" style="background-color: #FF9800;">
+                                                3°
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clientes Tab -->
+                <div class="tab-pane fade" id="clientes" role="tabpanel">
+                    <div class="mb-4">
+                        <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">Gestión de Clientes</h2>
+                        <p style="color: #ffffff; margin: 0;">Base de datos y seguimiento de clientes</p>
+                    </div>
+
+                    <!-- Agregando análisis de clientes y segmentación -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-2x mb-2" style="color: #4CAF50;"></i>
+                                    <h4 style="color: #ffffff;">{{ estadisticas.total_clientes or 0 }}</h4>
+                                    <p style="color: #cccccc; margin: 0;">Total Clientes</p>
+                                    <small style="color: #4CAF50;">
+                                        <i class="fas fa-arrow-up me-1"></i>+5 esta semana
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-star fa-2x mb-2" style="color: #2196F3;"></i>
+                                    <h4 style="color: #ffffff;">8</h4>
+                                    <p style="color: #cccccc; margin: 0;">Clientes VIP</p>
+                                    <small style="color: #2196F3;">
+                                        <i class="fas fa-gem me-1"></i>+$500 promedio
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-calendar-day fa-2x mb-2" style="color: #FF9800;"></i>
+                                    <h4 style="color: #ffffff;">3</h4>
+                                    <p style="color: #cccccc; margin: 0;">Nuevos Hoy</p>
+                                    <small style="color: #FF9800;">
+                                        <i class="fas fa-user-plus me-1"></i>Registro activo
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #9C27B0;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-heart fa-2x mb-2" style="color: #9C27B0;"></i>
+                                    <h4 style="color: #ffffff;">92%</h4>
+                                    <p style="color: #cccccc; margin: 0;">Satisfacción</p>
+                                    <small style="color: #9C27B0;">
+                                        <i class="fas fa-thumbs-up me-1"></i>Excelente
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Segmentación de clientes -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-8">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-header" style="background-color: #1976D2; color: #ffffff;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-chart-bar me-2"></i>Segmentación de Clientes
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span style="color: #ffffff;">Clientes Frecuentes</span>
+                                                    <span style="color: #4CAF50;">35%</span>
+                                                </div>
+                                                <div class="progress" style="height: 8px; background-color: #444;">
+                                                    <div class="progress-bar" style="width: 35%; background-color: #4CAF50;"></div>
+                                                </div>
+                                                <small style="color: #cccccc;">+5 pedidos/mes</small>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span style="color: #ffffff;">Clientes Regulares</span>
+                                                    <span style="color: #2196F3;">45%</span>
+                                                </div>
+                                                <div class="progress" style="height: 8px; background-color: #444;">
+                                                    <div class="progress-bar" style="width: 45%; background-color: #2196F3;"></div>
+                                                </div>
+                                                <small style="color: #cccccc;">2-4 pedidos/mes</small>
+                                            </div>
+                                            <div>
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span style="color: #ffffff;">Clientes Nuevos</span>
+                                                    <span style="color: #FF9800;">20%</span>
+                                                </div>
+                                                <div class="progress" style="height: 8px; background-color: #444;">
+                                                    <div class="progress-bar" style="width: 20%; background-color: #FF9800;"></div>
+                                                </div>
+                                                <small style="color: #cccccc;">1 pedido/mes</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="text-center">
+                                                <h6 style="color: #ffffff; margin-bottom: 15px;">Distribución por Valor</h6>
+                                                <div class="mb-2">
+                                                    <span class="badge" style="background-color: #4CAF50; padding: 8px 12px;">
+                                                        Alto Valor: $200+
+                                                    </span>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <span class="badge" style="background-color: #2196F3; padding: 8px 12px;">
+                                                        Medio Valor: $50-200
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span class="badge" style="background-color: #FF9800; padding: 8px 12px;">
+                                                        Bajo Valor: <$50
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #E91E63;">
+                                <div class="card-header" style="background-color: #C2185B; color: #ffffff;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-medal me-2"></i>Top Clientes
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong style="color: #ffffff;">María González</strong>
+                                                <br><small style="color: #cccccc;">$1,250 total</small>
+                                            </div>
+                                            <div class="badge" style="background-color: #FFD700; color: #000;">
+                                                <i class="fas fa-crown"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong style="color: #ffffff;">Carlos Ruiz</strong>
+                                                <br><small style="color: #cccccc;">$980 total</small>
+                                            </div>
+                                            <div class="badge" style="background-color: #C0C0C0; color: #000;">
+                                                2°
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong style="color: #ffffff;">Ana López</strong>
+                                                <br><small style="color: #cccccc;">$750 total</small>
+                                            </div>
+                                            <div class="badge" style="background-color: #CD7F32; color: #fff;">
+                                                3°
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventario Tab -->
+                <div class="tab-pane fade" id="inventario" role="tabpanel">
+                    <div class="mb-4">
+                        <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">Control de Inventario</h2>
+                        <p style="color: #ffffff; margin: 0;">Stock y disponibilidad de productos</p>
+                    </div>
+
+                    <!-- Agregando alertas de stock y análisis de inventario -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-boxes fa-2x mb-2" style="color: #4CAF50;"></i>
+                                    <h4 style="color: #ffffff;">12</h4>
+                                    <p style="color: #cccccc; margin: 0;">Productos Activos</p>
+                                    <small style="color: #4CAF50;">
+                                        <i class="fas fa-check-circle me-1"></i>Disponibles
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-exclamation-triangle fa-2x mb-2" style="color: #FF9800;"></i>
+                                    <h4 style="color: #ffffff;">3</h4>
+                                    <p style="color: #cccccc; margin: 0;">Stock Bajo</p>
+                                    <small style="color: #FF9800;">
+                                        <i class="fas fa-warning me-1"></i>Reabastecer
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #F44336;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-times-circle fa-2x mb-2" style="color: #F44336;"></i>
+                                    <h4 style="color: #ffffff;">1</h4>
+                                    <p style="color: #cccccc; margin: 0;">Agotado</p>
+                                    <small style="color: #F44336;">
+                                        <i class="fas fa-ban me-1"></i>Sin stock
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #9C27B0;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-star fa-2x mb-2" style="color: #9C27B0;"></i>
+                                    <h4 style="color: #ffffff;">5</h4>
+                                    <p style="color: #cccccc; margin: 0;">Más Vendidos</p>
+                                    <small style="color: #9C27B0;">
+                                        <i class="fas fa-fire me-1"></i>Populares
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertas de inventario -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-8">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-header" style="background-color: #F57C00; color: #ffffff;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-bell me-2"></i>Alertas de Stock
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert" style="background-color: #FFF3E0; color: #E65100; border: 1px solid #FFB74D; margin-bottom: 15px;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Pan Integral</strong> - Stock crítico
+                                                <br><small>Solo quedan 5 unidades</small>
+                                            </div>
+                                            <button class="btn btn-sm" style="background-color: #FF9800; color: #ffffff;">
+                                                <i class="fas fa-plus"></i> Reabastecer
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="alert" style="background-color: #FFF3E0; color: #E65100; border: 1px solid #FFB74D; margin-bottom: 15px;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Croissant de Chocolate</strong> - Stock bajo
+                                                <br><small>Quedan 8 unidades</small>
+                                            </div>
+                                            <button class="btn btn-sm" style="background-color: #FF9800; color: #ffffff;">
+                                                <i class="fas fa-plus"></i> Reabastecer
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="alert" style="background-color: #FFEBEE; color: #C62828; border: 1px solid #EF5350; margin-bottom: 0;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Café Especial</strong> - Agotado
+                                                <br><small>Sin stock disponible</small>
+                                            </div>
+                                            <button class="btn btn-sm" style="background-color: #F44336; color: #ffffff;">
+                                                <i class="fas fa-shopping-cart"></i> Comprar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-header" style="background-color: #388E3C; color: #ffffff;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-chart-pie me-2"></i>Rotación de Stock
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span style="color: #ffffff;">Rotación Alta</span>
+                                            <span style="color: #4CAF50;">60%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px; background-color: #444;">
+                                            <div class="progress-bar" style="width: 60%; background-color: #4CAF50;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span style="color: #ffffff;">Rotación Media</span>
+                                            <span style="color: #FF9800;">30%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px; background-color: #444;">
+                                            <div class="progress-bar" style="width: 30%; background-color: #FF9800;"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span style="color: #ffffff;">Rotación Baja</span>
+                                            <span style="color: #F44336;">10%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px; background-color: #444;">
+                                            <div class="progress-bar" style="width: 10%; background-color: #F44336;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reportes Tab -->
+                <div class="tab-pane fade" id="reportes" role="tabpanel">
+                    <div class="mb-4">
+                        <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">Reportes de Ventas</h2>
+                        <p style="color: #ffffff; margin: 0;">Análisis y estadísticas detalladas</p>
+                    </div>
+
+                    <!-- Agregando más opciones de reportes y análisis -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <button class="btn w-100" style="background-color: #4CAF50; color: #ffffff; padding: 20px; border: 1px solid #66BB6A;" onclick="generarReporte('diario')">
+                                <i class="fas fa-chart-line fa-2x mb-2"></i><br>
+                                <strong>Reporte Diario</strong><br>
+                                <small>Ventas del día actual</small>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn w-100" style="background-color: #2196F3; color: #ffffff; padding: 20px; border: 1px solid #42A5F5;" onclick="generarReporte('semanal')">
+                                <i class="fas fa-calendar-week fa-2x mb-2"></i><br>
+                                <strong>Reporte Semanal</strong><br>
+                                <small>Análisis de la semana</small>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn w-100" style="background-color: #FF9800; color: #ffffff; padding: 20px; border: 1px solid #FFB74D;" onclick="generarReporte('mensual')">
+                                <i class="fas fa-calendar-alt fa-2x mb-2"></i><br>
+                                <strong>Reporte Mensual</strong><br>
+                                <small>Estadísticas del mes</small>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Reportes adicionales -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <button class="btn w-100" style="background-color: #9C27B0; color: #ffffff; padding: 15px; border: 1px solid #BA68C8;" onclick="generarReporte('productos')">
+                                <i class="fas fa-box fa-lg mb-2"></i><br>
+                                <strong>Por Productos</strong><br>
+                                <small>Análisis de productos</small>
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn w-100" style="background-color: #E91E63; color: #ffffff; padding: 15px; border: 1px solid #F06292;" onclick="generarReporte('clientes')">
+                                <i class="fas fa-users fa-lg mb-2"></i><br>
+                                <strong>Por Clientes</strong><br>
+                                <small>Segmentación</small>
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn w-100" style="background-color: #00BCD4; color: #ffffff; padding: 15px; border: 1px solid #26C6DA;" onclick="generarReporte('metodos')">
+                                <i class="fas fa-credit-card fa-lg mb-2"></i><br>
+                                <strong>Métodos de Pago</strong><br>
+                                <small>Efectivo vs Digital</small>
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn w-100" style="background-color: #795548; color: #ffffff; padding: 15px; border: 1px solid #8D6E63;" onclick="generarReporte('horarios')">
+                                <i class="fas fa-clock fa-lg mb-2"></i><br>
+                                <strong>Por Horarios</strong><br>
+                                <small>Picos de venta</small>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Resumen de reportes recientes -->
+                    <div class="card" style="background-color: #2d2d2d; border: 1px solid #607D8B;">
+                        <div class="card-header" style="background-color: #455A64; color: #ffffff;">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history me-2"></i>Reportes Recientes
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="card" style="background-color: #1a1a1a; border: 1px solid #444;">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-file-pdf fa-2x mb-2" style="color: #F44336;"></i>
+                                            <h6 style="color: #ffffff;">Reporte Diario</h6>
+                                            <small style="color: #cccccc;">Generado hoy 09:30</small>
+                                            <br>
+                                            <button class="btn btn-sm mt-2" style="background-color: #4CAF50; color: #ffffff;">
+                                                <i class="fas fa-download"></i> Descargar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card" style="background-color: #1a1a1a; border: 1px solid #444;">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-file-excel fa-2x mb-2" style="color: #4CAF50;"></i>
+                                            <h6 style="color: #ffffff;">Reporte Semanal</h6>
+                                            <small style="color: #cccccc;">Generado ayer 18:45</small>
+                                            <br>
+                                            <button class="btn btn-sm mt-2" style="background-color: #4CAF50; color: #ffffff;">
+                                                <i class="fas fa-download"></i> Descargar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card" style="background-color: #1a1a1a; border: 1px solid #444;">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-chart-bar fa-2x mb-2" style="color: #2196F3;"></i>
+                                            <h6 style="color: #ffffff;">Análisis Mensual</h6>
+                                            <small style="color: #cccccc;">Generado hace 3 días</small>
+                                            <br>
+                                            <button class="btn btn-sm mt-2" style="background-color: #4CAF50; color: #ffffff;">
+                                                <i class="fas fa-download"></i> Descargar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nueva sección de Comprobantes Nequi -->
+                <div class="tab-pane fade" id="comprobantes" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">Comprobantes de Pago Nequi</h2>
+                            <p style="color: #ffffff; margin: 0;">Gestión de comprobantes de WhatsApp para pedidos con Nequi</p>
+                        </div>
+                        <button class="btn" style="background-color: #4CAF50; color: #ffffff; border: 1px solid #66BB6A;" onclick="cargarPedidosNequi()">
+                            <i class="fas fa-sync me-1"></i>Actualizar
+                        </button>
+                    </div>
+
+                    <!-- Estadísticas de Nequi -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-mobile-alt fa-2x mb-2" style="color: #4CAF50;"></i>
+                                    <h4 style="color: #ffffff;" id="total-nequi">0</h4>
+                                    <p style="color: #cccccc; margin: 0;">Pedidos Nequi</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-clock fa-2x mb-2" style="color: #FF9800;"></i>
+                                    <h4 style="color: #ffffff;" id="pendientes-comprobante">0</h4>
+                                    <p style="color: #cccccc; margin: 0;">Sin Comprobante</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-check-circle fa-2x mb-2" style="color: #2196F3;"></i>
+                                    <h4 style="color: #ffffff;" id="con-comprobante">0</h4>
+                                    <p style="color: #cccccc; margin: 0;">Con Comprobante</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #9C27B0;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-dollar-sign fa-2x mb-2" style="color: #9C27B0;"></i>
+                                    <h4 style="color: #ffffff;" id="total-nequi-valor">$0</h4>
+                                    <p style="color: #cccccc; margin: 0;">Total Nequi</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Pedidos Nequi -->
+                    <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                        <div class="card-header" style="background-color: #388E3C; color: #ffffff;">
+                            <h5 class="mb-0">Pedidos con Pago Nequi</h5>
+                        </div>
+                        <div class="card-body" id="lista-pedidos-nequi">
+                            <div class="text-center py-4">
+                                <i class="fas fa-mobile-alt fa-3x mb-3" style="color: #4CAF50;"></i>
+                                <h5 style="color: #ffffff;">Cargando pedidos Nequi...</h5>
+                                <p style="color: #cccccc;">Obteniendo información de la base de datos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function verDetallePedido(pedidoId) {
+        alert(`Ver detalle del pedido #${pedidoId} - Funcionalidad próximamente`);
+    }
+    
+    function cambiarEstadoPedido(pedidoId, nuevoEstado) {
+        if (confirm(`¿Cambiar estado del pedido #${pedidoId} a ${nuevoEstado}?`)) {
+            alert('Funcionalidad de cambio de estado próximamente');
+        }
+    }
+
+    function cargarPedidosNequi() {
+        fetch('/dashboard/pedidos-nequi')
+            .then(response => response.json())
+            .then(data => {
+                actualizarEstadisticasNequi(data);
+                mostrarPedidosNequi(data.pedidos);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('lista-pedidos-nequi').innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3" style="color: #FF9800;"></i>
+                        <h5 style="color: #ffffff;">Error al cargar pedidos</h5>
+                        <p style="color: #cccccc;">Intenta nuevamente en unos momentos</p>
+                    </div>
+                `;
+            });
+    }
+
+    function actualizarEstadisticasNequi(data) {
+        document.getElementById('total-nequi').textContent = data.total;
+        document.getElementById('pendientes-comprobante').textContent = data.sin_comprobante;
+        document.getElementById('con-comprobante').textContent = data.con_comprobante;
+        document.getElementById('total-nequi-valor').textContent = '$' + data.total_valor.toLocaleString();
+    }
+
+    function mostrarPedidosNequi(pedidos) {
+        const container = document.getElementById('lista-pedidos-nequi');
+        
+        if (pedidos.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-mobile-alt fa-3x mb-3" style="color: #cccccc;"></i>
+                    <h5 style="color: #ffffff;">No hay pedidos con Nequi</h5>
+                    <p style="color: #cccccc;">Los pedidos con método de pago Nequi aparecerán aquí</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<div class="row g-3">';
+        pedidos.forEach(pedido => {
+            const tieneComprobante = pedido.comprobante_pago ? true : false;
+            const badgeClass = tieneComprobante ? 'bg-success' : 'bg-warning';
+            const badgeText = tieneComprobante ? 'Con Comprobante' : 'Sin Comprobante';
+            
+            html += `
+                <div class="col-12">
+                    <div class="card" style="background-color: #1a1a1a; border: 1px solid #444;">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <h5 class="mb-0" style="color: #4CAF50;">Pedido #${pedido.id}</h5>
+                                    <small class="text-muted">${pedido.fecha_pedido}</small>
+                                </div>
+                                <div class="col-md-2">
+                                    <strong style="color: #ffffff;">${pedido.cliente_nombre || 'Cliente'}</strong>
+                                    <br><small class="text-muted">${pedido.cliente_email || ''}</small>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="fw-bold" style="color: #4CAF50;">$${pedido.total.toLocaleString()}</div>
+                                    <small class="text-muted">Nequi</small>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="badge ${badgeClass}">${badgeText}</span>
+                                </div>
+                                <div class="col-md-2">
+                                    ${tieneComprobante ? 
+                                        `<button class="btn btn-sm btn-outline-info" onclick="verComprobante(${pedido.id})">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </button>` :
+                                        `<button class="btn btn-sm btn-primary" onclick="subirComprobante(${pedido.id})">
+                                            <i class="fas fa-upload"></i> Subir
+                                        </button>`
+                                    }
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="verDetallePedido(${pedido.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    function subirComprobante(pedidoId) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('comprobante', file);
+                formData.append('pedido_id', pedidoId);
+                
+                fetch('/dashboard/subir-comprobante', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Comprobante subido exitosamente');
+                        cargarPedidosNequi(); // Recargar la lista
+                    } else {
+                        alert('Error al subir comprobante: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al subir comprobante');
+                });
+            }
+        };
+        input.click();
+    }
+
+    function verComprobante(pedidoId) {
+        window.open(`/dashboard/ver-comprobante/${pedidoId}`, '_blank');
+    }
+
+    // Cargar pedidos Nequi cuando se active la pestaña
+    document.getElementById('comprobantes-tab').addEventListener('click', function() {
+        setTimeout(cargarPedidosNequi, 100);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const navButtons = document.querySelectorAll('#vendedor-tabs .nav-link');
+        navButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                navButtons.forEach(btn => {
+                    btn.style.backgroundColor = '#f8f9fa';
+                    btn.style.color = '#333';
+                    btn.style.border = '1px solid #444';
+                });
+                this.style.backgroundColor = '#4CAF50';
+                this.style.color = '#ffffff';
+                this.style.border = 'none';
+            });
+        });
+    });
+
+    function generarReporte(tipo) {
+        const reportes = {
+            'diario': 'Reporte Diario de Ventas',
+            'semanal': 'Reporte Semanal de Ventas', 
+            'mensual': 'Reporte Mensual de Ventas',
+            'productos': 'Análisis por Productos',
+            'clientes': 'Segmentación de Clientes',
+            'metodos': 'Métodos de Pago',
+            'horarios': 'Análisis por Horarios'
+        };
+        
+        alert(`Generando ${reportes[tipo]}...\nFuncionalidad próximamente disponible`);
+    }
+</script>
+{% endblock %}

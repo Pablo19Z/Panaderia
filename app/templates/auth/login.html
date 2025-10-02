@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-bread-slice fa-3x text-warning mb-3"></i>
+                        <h3 class="brand-title">Iniciar Sesión</h3>
+                        <p class="text-muted">Accede a tu cuenta en Migas de oro Dorè</p>
+                    </div>
+                    
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Contraseña
+                            </label>
+                            <!-- Agregando contenedor para input de contraseña con botón de mostrar/ocultar -->
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye" id="toggleIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="text-muted">
+                                ¿No tienes cuenta? 
+                                <!-- Corregido url_for('register') a url_for('auth.register') -->
+                                <a href="{{ url_for('auth.register') }}" class="text-warning text-decoration-none">
+                                    Regístrate aquí
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <small class="text-muted">
+                            <!-- Cambiando "Cuentas de prueba" por "Usuarios del sistema" -->
+                            <strong>Usuarios del sistema:</strong><br>
+                            <strong>Administrador:</strong><br>
+                            Email: admin@migasdeoro.com<br>
+                            Contraseña: admin123<br><br>
+                            <strong>Vendedor:</strong><br>
+                            Email: vendedor@migasdeoro.com<br>
+                            Contraseña: vendedor123
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Agregando JavaScript para funcionalidad de mostrar/ocultar contraseña -->
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    });
+</script>
+{% endblock %}

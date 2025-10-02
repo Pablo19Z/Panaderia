@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Chef - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Sidebar Chef -->
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-crown fa-3x text-warning mb-2"></i>
+                    <h6 class="card-title">{{ usuario.nombre }}</h6>
+                    <span class="badge bg-warning text-dark">Jefe de Cocina</span>
+                </div>
+            </div>
+            
+            <div class="list-group mt-3">
+                <a href="#supervision" class="list-group-item list-group-item-action active" data-bs-toggle="pill">
+                    <i class="fas fa-eye me-2"></i>Supervisión
+                </a>
+                <a href="#inventario" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-boxes me-2"></i>Inventario
+                    {% if insumos_bajo_stock %}
+                    <span class="badge bg-danger float-end">{{ insumos_bajo_stock|length }}</span>
+                    {% endif %}
+                </a>
+                <a href="#produccion-dia" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-chart-pie me-2"></i>Producción del Día
+                </a>
+                <a href="#planificacion" class="list-group-item list-group-item-action" data-bs-toggle="pill">
+                    <i class="fas fa-calendar me-2"></i>Planificación
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- Supervisión General -->
+                <div class="tab-pane fade show active" id="supervision">
+                    <h1 class="brand-title display-6 mb-4">Supervisión General</h1>
+                    
+                    <!-- Métricas del Día -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-fire fa-2x mb-2"></i>
+                                    <h4>{{ produccion_dia|length }}</h4>
+                                    <p class="mb-0">Productos en Producción</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-dark">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                                    <h4>{{ insumos_bajo_stock|length }}</h4>
+                                    <p class="mb-0">Insumos Críticos</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-2x mb-2"></i>
+                                    <h4>4</h4>
+                                    <p class="mb-0">Cocineros Activos</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-clock fa-2x mb-2"></i>
+                                    <h4>85%</h4>
+                                    <p class="mb-0">Eficiencia</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alertas Importantes -->
+                    {% if insumos_bajo_stock %}
+                    <div class="alert alert-warning">
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Alertas de Inventario</h5>
+                        <p class="mb-2">Los siguientes insumos requieren atención inmediata:</p>
+                        <ul class="mb-0">
+                            {% for insumo in insumos_bajo_stock[:3] %}
+                            <li><strong>{{ insumo[1] }}</strong>: {{ insumo[3] }} {{ insumo[5] }} (Mínimo: {{ insumo[4] }})</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Estado de la Cocina -->
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-thermometer-half me-2"></i>Estado de Equipos</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>Horno Principal</span>
+                                        <span class="badge bg-success">Operativo</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>Horno Secundario</span>
+                                        <span class="badge bg-success">Operativo</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>Batidora Industrial</span>
+                                        <span class="badge bg-warning text-dark">Mantenimiento</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>Refrigerador</span>
+                                        <span class="badge bg-success">Operativo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-users me-2"></i>Equipo de Trabajo</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>María González</span>
+                                        <span class="badge bg-success">Activa</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>Carlos Ruiz</span>
+                                        <span class="badge bg-success">Activo</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>Ana Martínez</span>
+                                        <span class="badge bg-warning text-dark">Descanso</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>Luis Pérez</span>
+                                        <span class="badge bg-success">Activo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gestión de Inventario -->
+                <div class="tab-pane fade" id="inventario">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="brand-title">Gestión de Inventario</h2>
+                        <button class="btn btn-primary" onclick="alert('Funcionalidad próximamente')">
+                            <i class="fas fa-plus me-1"></i>Agregar Insumo
+                        </button>
+                    </div>
+                    
+                    {% if insumos_bajo_stock %}
+                    <div class="alert alert-danger">
+                        <h5><i class="fas fa-exclamation-circle me-2"></i>Insumos con Stock Crítico</h5>
+                        <p>Los siguientes insumos necesitan reposición urgente:</p>
+                    </div>
+                    
+                    <div class="row g-3 mb-4">
+                        {% for insumo in insumos_bajo_stock %}
+                        <div class="col-md-6">
+                            <div class="card border-danger">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h5 class="card-title text-danger">{{ insumo[1] }}</h5>
+                                            <p class="card-text text-muted">{{ insumo[2] }}</p>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <small class="text-muted">Stock Actual:</small>
+                                                    <div class="fw-bold text-danger">{{ insumo[3] }} {{ insumo[5] }}</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted">Mínimo:</small>
+                                                    <div class="fw-bold">{{ insumo[4] }} {{ insumo[5] }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="reabastecer({{ insumo[0] }})">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-truck me-1"></i>Proveedor: {{ insumo[7] }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Todos los insumos tienen stock adecuado.
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Producción del Día -->
+                <div class="tab-pane fade" id="produccion-dia">
+                    <h2 class="brand-title mb-4">Producción del Día</h2>
+                    
+                    {% if produccion_dia %}
+                    <div class="row g-3">
+                        {% for producto in produccion_dia %}
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">{{ producto[0] }}</h5>
+                                    <div class="display-6 text-primary">{{ producto[1] }}</div>
+                                    <p class="card-text text-muted">unidades vendidas</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Sin datos de producción hoy</h4>
+                        <p class="text-muted">Los datos aparecerán cuando se realicen ventas</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Planificación -->
+                <div class="tab-pane fade" id="planificacion">
+                    <h2 class="brand-title mb-4">Planificación de Producción</h2>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Sistema de planificación de producción próximamente disponible con calendarios y programación automática.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function reabastecer(insumoId) {
+        const cantidad = prompt('¿Qué cantidad deseas agregar al inventario?');
+        if (cantidad && !isNaN(cantidad) && cantidad > 0) {
+            alert(`Funcionalidad de reabastecimiento próximamente. Insumo: ${insumoId}, Cantidad: ${cantidad}`);
+        }
+    }
+</script>
+{% endblock %}

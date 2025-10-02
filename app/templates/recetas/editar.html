@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Receta - Panadería Migas de Oro{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <!-- Header Section -->
+                <div class="text-center mb-5">
+                    <div class="bg-gradient p-4 rounded-4 shadow-lg mb-4" 
+                         style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%); border: 2px solid #b8860b;">
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <a href="{{ url_for('dashboard.admin') }}" 
+                               class="btn btn-outline-dark me-4 px-4 py-2 rounded-pill"
+                               style="border-color: #1a1a1a; color: #1a1a1a;">
+                                <i class="fas fa-arrow-left me-2"></i>Volver
+                            </a>
+                            <h1 class="display-5 fw-bold text-white mb-0" style="font-family: 'Dancing Script', cursive; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                                <i class="fas fa-edit me-3" style="color: #8b4513;"></i>Editar Receta
+                            </h1>
+                        </div>
+                        <p class="text-white fs-5 mb-0" style="font-weight: 500; opacity: 0.9;">Actualiza la información de la receta</p>
+                    </div>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm">
+                                <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Main Form Card -->
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-header py-4" style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-book-open fs-3 me-3" style="color: #d4af37;"></i>
+                            <div>
+                                <h4 class="mb-1 fw-bold text-dark">Información de la Receta</h4>
+                                <p class="mb-0 text-muted">Actualiza los campos necesarios</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-5 bg-white">
+                        <form method="POST" class="needs-validation" novalidate>
+                            <!-- Nombre -->
+                            <div class="mb-4">
+                                <label for="nombre" class="form-label fw-semibold text-dark fs-6 mb-2">
+                                    <i class="fas fa-tag me-2" style="color: #d4af37;"></i>Nombre de la Receta *
+                                </label>
+                                <input type="text" id="nombre" name="nombre" required value="{{ receta.nombre }}"
+                                       class="form-control form-control-lg border-2 rounded-3 shadow-sm"
+                                       style="border-color: #dee2e6; background-color: #f8f9fa; color: #000000;">
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="mb-4">
+                                <label for="descripcion" class="form-label fw-semibold text-dark fs-6 mb-2">
+                                    <i class="fas fa-align-left me-2" style="color: #d4af37;"></i>Descripción
+                                </label>
+                                <textarea id="descripcion" name="descripcion" rows="3"
+                                          class="form-control border-2 rounded-3 shadow-sm"
+                                          style="border-color: #dee2e6; background-color: #f8f9fa; resize: vertical; color: #000000;">{{ receta.descripcion or '' }}</textarea>
+                            </div>
+
+                            <!-- Ingredientes -->
+                            <div class="mb-4">
+                                <label for="ingredientes" class="form-label fw-semibold text-dark fs-6 mb-2">
+                                    <i class="fas fa-list-ul me-2" style="color: #d4af37;"></i>Ingredientes
+                                </label>
+                                <textarea id="ingredientes" name="ingredientes" rows="6"
+                                          class="form-control border-2 rounded-3 shadow-sm"
+                                          style="border-color: #dee2e6; background-color: #f8f9fa; resize: vertical; color: #000000;">{{ receta.ingredientes or '' }}</textarea>
+                            </div>
+
+                            <!-- Instrucciones -->
+                            <div class="mb-4">
+                                <label for="instrucciones" class="form-label fw-semibold text-dark fs-6 mb-2">
+                                    <i class="fas fa-tasks me-2" style="color: #d4af37;"></i>Instrucciones de Preparación
+                                </label>
+                                <textarea id="instrucciones" name="instrucciones" rows="8"
+                                          class="form-control border-2 rounded-3 shadow-sm"
+                                          style="border-color: #dee2e6; background-color: #f8f9fa; resize: vertical; color: #000000;">{{ receta.instrucciones or '' }}</textarea>
+                            </div>
+
+                            <!-- Tiempo, Porciones y Dificultad -->
+                            <div class="row mb-4">
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <label for="tiempo_preparacion" class="form-label fw-semibold text-dark fs-6 mb-2">
+                                        <i class="fas fa-clock me-2 text-info"></i>Tiempo (min)
+                                    </label>
+                                    <input type="number" id="tiempo_preparacion" name="tiempo_preparacion" min="0" value="{{ receta.tiempo_preparacion or '' }}"
+                                           class="form-control form-control-lg border-2 rounded-3 shadow-sm"
+                                           style="border-color: #dee2e6; background-color: #f8f9fa; color: #000000;">
+                                </div>
+
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <label for="porciones" class="form-label fw-semibold text-dark fs-6 mb-2">
+                                        <i class="fas fa-users me-2 text-success"></i>Porciones
+                                    </label>
+                                    <input type="number" id="porciones" name="porciones" min="1" value="{{ receta.porciones or '' }}"
+                                           class="form-control form-control-lg border-2 rounded-3 shadow-sm"
+                                           style="border-color: #dee2e6; background-color: #f8f9fa; color: #000000;">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="dificultad" class="form-label fw-semibold text-dark fs-6 mb-2">
+                                        <i class="fas fa-signal me-2 text-warning"></i>Dificultad
+                                    </label>
+                                    <select id="dificultad" name="dificultad"
+                                            class="form-select form-select-lg border-2 rounded-3 shadow-sm"
+                                            style="border-color: #dee2e6; background-color: #f8f9fa; color: #000000;">
+                                        <option value="Fácil" {% if receta.dificultad == 'Fácil' %}selected{% endif %}>Fácil</option>
+                                        <option value="Media" {% if receta.dificultad == 'Media' %}selected{% endif %}>Media</option>
+                                        <option value="Difícil" {% if receta.dificultad == 'Difícil' %}selected{% endif %}>Difícil</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Categoría -->
+                            <div class="mb-4">
+                                <label for="categoria_id" class="form-label fw-semibold text-dark fs-6 mb-2">
+                                    <i class="fas fa-list me-2 text-info"></i>Categoría
+                                </label>
+                                <select id="categoria_id" name="categoria_id"
+                                        class="form-select form-select-lg border-2 rounded-3 shadow-sm"
+                                        style="border-color: #dee2e6; background-color: #f8f9fa; color: #000000;">
+                                    <option value="">Seleccionar categoría</option>
+                                    {% for categoria in categorias %}
+                                        <option value="{{ categoria.id }}" {% if categoria.id == receta.categoria_id %}selected{% endif %}>
+                                            {{ categoria.nombre }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Imagen -->
+                            <div class="mb-5">
+                                <label for="imagen" class="form-label fw-semibold text-dark fs-6 mb-2">
+                                    <i class="fas fa-image me-2 text-warning"></i>URL de Imagen
+                                </label>
+                                <input type="url" id="imagen" name="imagen" value="{{ receta.imagen or '' }}"
+                                       class="form-control form-control-lg border-2 rounded-3 shadow-sm"
+                                       style="border-color: #dee2e6; background-color: #f8f9fa; color: #000000;">
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-end gap-3 pt-4 border-top">
+                                <a href="{{ url_for('dashboard.admin') }}" 
+                                   class="btn btn-outline-secondary btn-lg px-5 py-3 rounded-pill">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </a>
+                                <button type="submit" 
+                                        class="btn btn-lg px-5 py-3 rounded-pill shadow"
+                                        style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); border: 2px solid #b8860b; color: #1a1a1a; font-weight: 600;">
+                                    <i class="fas fa-save me-2"></i>Actualizar Receta
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus, .form-select:focus {
+        border-color: #d4af37 !important;
+        box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.2) !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:hover, .form-select:hover {
+        border-color: #d4af37 !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+</style>
+
+<script>
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

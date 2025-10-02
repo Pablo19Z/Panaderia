@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Productos - Panadería Migas de Oro{% endblock %}
+
+{% block content %}
+<!-- Agregando estilo dorado al banner y mejorando organización de colores -->
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 100vh;">
+    <div class="container">
+        <!-- Header principal con estilo dorado -->
+        <div class="text-center mb-5">
+            <div class="position-relative">
+                <!-- Banner dorado elegante -->
+                <div class="bg-gradient p-4 rounded-4 shadow-lg mb-4" 
+                     style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%); border: 2px solid #b8860b;">
+                    <h1 class="display-4 fw-bold text-white mb-2" style="font-family: 'Dancing Script', cursive; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                        <i class="fas fa-crown me-3" style="color: #ffffff;"></i>Gestión de Productos
+                    </h1>
+                    <p class="text-white fs-5 mb-0" style="font-weight: 500; opacity: 0.9;">Inventario y control de productos de panadería artesanal</p>
+                </div>
+                
+                <!-- Botón nuevo producto -->
+                <a href="{{ url_for('productos.crear_producto') }}" 
+                   class="btn btn-lg px-5 py-3 rounded-pill shadow-lg position-absolute end-0 top-50 translate-middle-y"
+                   style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); border: 2px solid #b8860b; color: #1a1a1a; font-weight: 600;">
+                    <i class="fas fa-plus me-2"></i>Nuevo Producto
+                </a>
+            </div>
+        </div>
+
+        <!-- Mensajes flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Estadísticas con mejor organización de colores -->
+        <div class="row mb-5">
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-lg rounded-4 h-100" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                    <div class="card-body text-center text-white">
+                        <div class="mb-3">
+                            <i class="fas fa-box fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold">{{ productos|selectattr('activo')|list|length }}</h3>
+                        <p class="mb-0 opacity-75">Productos Activos</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-lg rounded-4 h-100" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+                    <div class="card-body text-center text-white">
+                        <div class="mb-3">
+                            <i class="fas fa-exclamation-triangle fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold">{{ productos|selectattr('stock', 'le', 10)|list|length }}</h3>
+                        <p class="mb-0 opacity-75">Stock Bajo</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-lg rounded-4 h-100" style="background: linear-gradient(135deg, #007bff 0%, #6f42c1 100%);">
+                    <div class="card-body text-center text-white">
+                        <div class="mb-3">
+                            <i class="fas fa-star fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold">{{ productos|selectattr('stock', 'gt', 50)|list|length }}</h3>
+                        <p class="mb-0 opacity-75">Más Vendidos</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-lg rounded-4 h-100" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
+                    <div class="card-body text-center text-white">
+                        <div class="mb-3">
+                            <i class="fas fa-pause-circle fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold">{{ productos|rejectattr('activo')|list|length }}</h3>
+                        <p class="mb-0 opacity-75">Inactivos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de productos con mejor diseño -->
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header py-4" style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); border-bottom: 3px solid #b8860b;">
+                <h4 class="mb-0 fw-bold text-dark">
+                    <i class="fas fa-list me-2"></i>Lista de Productos
+                </h4>
+            </div>
+            
+            <div class="card-body p-0" style="background-color: #f8f9fa;">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead style="background: linear-gradient(135deg, #343a40 0%, #495057 100%);">
+                            <tr>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-box me-2"></i>Producto
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-tags me-2"></i>Categoría
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-dollar-sign me-2"></i>Precio
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-warehouse me-2"></i>Stock
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-toggle-on me-2"></i>Estado
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-cogs me-2"></i>Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody style="background-color: white;">
+                            {% for producto in productos %}
+                            <tr class="border-bottom">
+                                <td class="px-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <img class="rounded-3 shadow-sm border" 
+                                                 src="{{ producto.imagen or '/static/images/default-product.jpg' }}" 
+                                                 alt="{{ producto.nombre }}"
+                                                 style="width: 50px; height: 50px; object-fit: cover;"
+                                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNSAzN0MzMS42Mjc0IDM3IDM3IDMxLjYyNzQgMzcgMjVDMzcgMTguMzcyNiAzMS42Mjc0IDEzIDI1IDEzQzE4LjM3MjYgMTMgMTMgMTguMzcyNiAxMyAyNUMxMyAzMS42Mjc0IDE4LjM3MjYgMzcgMjUgMzdaIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMjUgMjlWMjEiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHA+dGggZD0iTTIxIDI1SDI5IiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo='">
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold text-dark">{{ producto.nombre }}</div>
+                                            <div class="text-muted small">
+                                                {{ (producto.descripcion or '')[:50] }}{% if producto.descripcion and producto.descripcion|length > 50 %}...{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge" style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); color: #1a1a1a; font-weight: 600;">
+                                        {% for categoria in categorias %}
+                                            {% if categoria.id == producto.categoria_id %}
+                                                {{ categoria.nombre }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="fw-semibold text-dark">${{ "{:,.0f}".format(producto.precio) }}</div>
+                                    <div class="text-muted small">COP</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge {% if producto.stock > 10 %}bg-success{% elif producto.stock > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        <i class="fas fa-cube me-1"></i>{{ producto.stock }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge {% if producto.activo %}bg-success{% else %}bg-danger{% endif %}">
+                                        <i class="fas fa-{{ 'check' if producto.activo else 'times' }} me-1"></i>
+                                        {% if producto.activo %}Activo{% else %}Inactivo{% endif %}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ url_for('productos.editar_producto', producto_id=producto.id) }}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </a>
+                                        <form method="POST" action="{{ url_for('productos.eliminar_producto', producto_id=producto.id) }}" 
+                                              class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este producto?')">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-box-open fs-1 mb-3 text-secondary"></i>
+                                        <h5 class="text-dark">No hay productos registrados</h5>
+                                        <p>Comienza agregando tu primer producto</p>
+                                        <a href="{{ url_for('productos.crear_producto') }}" 
+                                           class="btn" style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); color: #1a1a1a; font-weight: 600;">
+                                            <i class="fas fa-plus me-2"></i>Agregar Producto
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos mejorados con efectos hover y transiciones -->
+<style>
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+        transition: all 0.3s ease;
+    }
+    
+    .card {
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(212, 175, 55, 0.1) !important;
+        transition: all 0.3s ease;
+    }
+    
+    .badge {
+        transition: all 0.3s ease;
+    }
+    
+    .badge:hover {
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}

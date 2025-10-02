@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="container-fluid p-0">
+    <!-- Usando la URL de imagen de fondo dinámica desde la configuración del sistema -->
+    <section class="hero-section position-relative" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ hero_background_url }}'); background-size: cover; background-position: center; height: 70vh; display: flex; align-items: center;">
+        <div class="container text-center text-white">
+            <!-- Removed bread emojis from title -->
+            <h1 class="display-2 brand-title mb-4" style="text-shadow: 3px 3px 6px rgba(0,0,0,0.8);">
+                Bienvenidos a Migas de oro Dorè
+            </h1>
+            <p class="lead fs-3 mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                Panadería artesanal con tradición familiar desde 1985
+            </p>
+            <p class="fs-5 mb-5" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+                Los mejores ingredientes, las recetas más auténticas y el amor por la panadería tradicional
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="{{ url_for('productos.catalogo') }}" class="btn btn-primary btn-lg px-4 py-3">
+                    <i class="fas fa-cookie-bite me-2"></i>Ver Productos
+                </a>
+                <a href="{{ url_for('historia') }}" class="btn btn-outline-light btn-lg px-4 py-3">
+                    <i class="fas fa-book-open me-2"></i>Nuestra Historia
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Preview Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="display-4 brand-title mb-3" style="color: var(--primary-color);">Nuestros Productos Destacados</h2>
+                    <p class="lead text-muted">Una selección de nuestras especialidades más populares</p>
+                    <div class="mx-auto" style="width: 100px; height: 3px; background: var(--primary-color); margin-bottom: 2rem;"></div>
+                </div>
+            </div>
+            <div class="row g-4">
+                {% for producto in productos_destacados[:3] %}
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg)); transition: transform 0.3s ease;">
+                        <div class="position-relative overflow-hidden">
+                            <img src="{{ producto.imagen_url or '/placeholder.svg?height=250&width=400&query=' + producto.nombre + ' panaderia artesanal' }}" 
+                                 class="card-img-top" alt="{{ producto.nombre }}" style="height: 250px; object-fit: cover; transition: transform 0.3s ease;">
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <span class="badge bg-primary fs-6">${{ "%.2f"|format(producto.precio) }}</span>
+                            </div>
+                        </div>
+                        <div class="card-body text-center p-4">
+                            <h5 class="card-title mb-3" style="color: var(--primary-color);">{{ producto.nombre }}</h5>
+                            <p class="card-text text-muted mb-4">{{ producto.descripcion[:100] }}...</p>
+                            <a href="{{ url_for('productos.detalle', producto_id=producto.id) }}" 
+                               class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-eye me-2"></i>Ver Detalles
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-5">
+                <a href="{{ url_for('productos.catalogo') }}" class="btn btn-outline-primary btn-lg px-5 py-3">
+                    <i class="fas fa-th-large me-2"></i>Ver Todos los Productos
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5" style="background-color: var(--darker-bg);">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="display-4 brand-title mb-3" style="color: var(--primary-color);">¿Por qué elegirnos?</h2>
+                    <p class="lead text-muted">Más de 35 años de experiencia nos respaldan</p>
+                    <div class="mx-auto" style="width: 100px; height: 3px; background: var(--primary-color); margin-bottom: 2rem;"></div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div class="mb-4">
+                            <i class="fas fa-leaf fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h4 class="mb-3" style="color: var(--primary-color);">Ingredientes Naturales</h4>
+                        <p class="text-muted">Utilizamos solo los mejores ingredientes naturales, sin conservantes ni aditivos químicos.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div class="mb-4">
+                            <i class="fas fa-clock fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h4 class="mb-3" style="color: var(--primary-color);">Frescura Diaria</h4>
+                        <p class="text-muted">Todos nuestros productos se hornean frescos cada día para garantizar la mejor calidad y sabor.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div class="mb-4">
+                            <i class="fas fa-heart fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h4 class="mb-3" style="color: var(--primary-color);">Tradición Familiar</h4>
+                        <p class="text-muted">Recetas transmitidas de generación en generación con el amor y cuidado de siempre.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust & Guarantees Section -->
+    <section class="py-5" style="background-color: var(--darker-bg);">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="display-4 brand-title mb-3" style="color: var(--primary-color);">Nuestra Garantía de Calidad</h2>
+                    <p class="lead text-muted">Comprometidos con tu satisfacción en cada compra</p>
+                    <div class="mx-auto" style="width: 100px; height: 3px; background: var(--primary-color); margin-bottom: 2rem;"></div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 text-center p-4" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                        <div class="mb-3">
+                            <i class="fas fa-truck fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h5 class="mb-3" style="color: var(--primary-color);">Entrega Rápida</h5>
+                        <p class="text-muted mb-0">Recibe tus productos frescos el mismo día de tu pedido</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 text-center p-4" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                        <div class="mb-3">
+                            <i class="fas fa-shield-alt fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h5 class="mb-3" style="color: var(--primary-color);">100% Garantizado</h5>
+                        <p class="text-muted mb-0">Si no estás satisfecho, te devolvemos tu dinero sin preguntas</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 text-center p-4" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                        <div class="mb-3">
+                            <i class="fas fa-award fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h5 class="mb-3" style="color: var(--primary-color);">Calidad Premium</h5>
+                        <p class="text-muted mb-0">Ingredientes seleccionados y procesos artesanales certificados</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 text-center p-4" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                        <div class="mb-3">
+                            <i class="fas fa-headset fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h5 class="mb-3" style="color: var(--primary-color);">Atención 24/7</h5>
+                        <p class="text-muted mb-0">Estamos disponibles para resolver todas tus dudas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Full-Width Artisan Banner -->
+    <section class="py-5 position-relative" style="background: linear-gradient(135deg, var(--secondary-color), var(--primary-color)); overflow: hidden;">
+        <div class="container">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-8 text-center text-lg-start mb-4 mb-lg-0">
+                    <h2 class="display-4 brand-title mb-3" style="color: var(--darker-bg); text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
+                        Horneado Artesanal Todos los Días
+                    </h2>
+                    <p class="fs-4 mb-0" style="color: var(--darker-bg);">
+                        Más de 35 años de tradición familiar en cada bocado. Visítanos y descubre el sabor auténtico de la panadería artesanal.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-center text-lg-end">
+                    <a href="{{ url_for('productos.catalogo') }}" class="btn btn-dark btn-lg px-5 py-3 me-2 mb-2">
+                        <i class="fas fa-shopping-bag me-2"></i>Ordenar Ahora
+                    </a>
+                    <a href="{{ url_for('historia') }}" class="btn btn-outline-dark btn-lg px-5 py-3 mb-2">
+                        <i class="fas fa-book-open me-2"></i>Conoce Más
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Decorative elements -->
+        <div class="position-absolute" style="top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%; z-index: 0;"></div>
+        <div class="position-absolute" style="bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; z-index: 0;"></div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-5" style="background-color: var(--darker-bg);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3 class="brand-title mb-4" style="color: var(--primary-color);">Visítanos</h3>
+                    <div class="mb-3">
+                        <i class="fas fa-map-marker-alt me-3" style="color: var(--primary-color);"></i>
+                        <span>Calle 13a, Bogotá, Colombia</span>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-phone me-3" style="color: var(--primary-color);"></i>
+                        <span>3022655975</span>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-envelope me-3" style="color: var(--primary-color);"></i>
+                        <span>karlavaw14@gmail.com</span>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-clock me-3" style="color: var(--primary-color);"></i>
+                        <span>Lunes a Domingo: 6:00 AM - 8:00 PM</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="brand-title mb-4" style="color: var(--primary-color);">Síguenos</h3>
+                    <p class="text-muted mb-4">Mantente al día con nuestras últimas creaciones y ofertas especiales.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="btn btn-outline-primary btn-lg">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-primary btn-lg">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-primary btn-lg">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

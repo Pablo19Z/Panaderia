@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Personal - Migas de oro Dorè</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); 
+            color: #f8f9fa; 
+            min-height: 100vh;
+        }
+        .navbar { background: rgba(0,0,0,0.9) !important; }
+        .brand-name { 
+            font-family: 'Dancing Script', cursive; 
+            color: #ffd700; 
+            font-size: 1.8rem; 
+        }
+        .card { 
+            background: rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255,215,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+        .btn-gold { 
+            background: linear-gradient(45deg, #ffd700, #ffed4e); 
+            color: #000; 
+            border: none; 
+            font-weight: 600;
+        }
+        .btn-gold:hover { 
+            background: linear-gradient(45deg, #ffed4e, #ffd700); 
+            color: #000; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255,215,0,0.3);
+        }
+        .table-dark { 
+            background: rgba(0,0,0,0.7); 
+        }
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+            border: 1px solid rgba(255,215,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255,215,0,0.2);
+        }
+        .role-badge-vendedor { background: linear-gradient(45deg, #28a745, #20c997); }
+        .role-badge-chef { background: linear-gradient(45deg, #fd7e14, #ffc107); }
+        .sales-amount { color: #28a745; font-weight: bold; }
+        .btn-report { 
+            background: linear-gradient(45deg, #17a2b8, #20c997);
+            border: none;
+            color: white;
+        }
+        .btn-report:hover {
+            background: linear-gradient(45deg, #20c997, #17a2b8);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header navigation with breadcrumb -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand brand-name" href="/">
+                <i class="fas fa-bread-slice"></i> Migas de oro Dorè
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('dashboard.admin') }}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Breadcrumb navigation -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent">
+                <li class="breadcrumb-item">
+                    <a href="{{ url_for('dashboard.admin') }}" class="text-warning">Centro de Control</a>
+                </li>
+                <li class="breadcrumb-item active text-light">Gestión de Personal</li>
+            </ol>
+        </nav>
+
+        <!-- Header with statistics -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2><i class="fas fa-users-cog"></i> Gestión de Personal</h2>
+                        <p class="mb-0 text-muted">Control y seguimiento del equipo de trabajo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-tie fa-2x text-info mb-2"></i>
+                        <h4>{{ total_vendedores }}</h4>
+                        <p class="mb-0">Vendedores Activos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chef-hat fa-2x text-warning mb-2"></i>
+                        <h4>{{ total_chefs }}</h4>
+                        <p class="mb-0">Chefs Activos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
+                        <h4>${{ ventas_mes_total }}</h4>
+                        <p class="mb-0">Ventas del Mes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-line fa-2x text-danger mb-2"></i>
+                        <h4>{{ pedidos_mes }}</h4>
+                        <p class="mb-0">Pedidos del Mes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal management section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4><i class="fas fa-users"></i> Equipo de Trabajo</h4>
+                        <div>
+                            <button class="btn btn-gold me-2" data-bs-toggle="modal" data-bs-target="#nuevoPersonalModal">
+                                <i class="fas fa-user-plus"></i> Nuevo Personal
+                            </button>
+                            <button class="btn btn-report" onclick="descargarReporteGeneral()">
+                                <i class="fas fa-file-pdf"></i> Reporte General
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Tabs for different roles -->
+                        <ul class="nav nav-tabs mb-3" id="personalTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="vendedores-tab" data-bs-toggle="tab" data-bs-target="#vendedores" type="button" role="tab">
+                                    <i class="fas fa-user-tie"></i> Vendedores ({{ vendedores|length }})
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="chefs-tab" data-bs-toggle="tab" data-bs-target="#chefs" type="button" role="tab">
+                                    <i class="fas fa-chef-hat"></i> Chefs ({{ chefs|length }})
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="personalTabsContent">
+                            <!-- Vendedores tab -->
+                            <div class="tab-pane fade show active" id="vendedores" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Vendedor</th>
+                                                <th>Email</th>
+                                                <th>Teléfono</th>
+                                                <th>Ventas del Mes</th>
+                                                <th>Total Vendido</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for vendedor in vendedores %}
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-user-circle fa-2x text-info me-2"></i>
+                                                        <div>
+                                                            <strong>{{ vendedor.nombre }}</strong>
+                                                            <br><small class="text-muted">ID: {{ vendedor.id }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{{ vendedor.email }}</td>
+                                                <td>{{ vendedor.telefono or 'No registrado' }}</td>
+                                                <td>
+                                                    <span class="badge bg-primary">{{ vendedor.pedidos_mes }}</span> pedidos
+                                                </td>
+                                                <td>
+                                                    <span class="sales-amount">${{ "%.2f"|format(vendedor.ventas_mes) }}</span>
+                                                </td>
+                                                <td>
+                                                    {% if vendedor.activo %}
+                                                        <span class="badge bg-success">Activo</span>
+                                                    {% else %}
+                                                        <span class="badge bg-danger">Inactivo</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button class="btn btn-sm btn-info" onclick="verDetalle({{ vendedor.id }})">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-warning" onclick="editarPersonal({{ vendedor.id }})">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-report" onclick="descargarReporteVendedor({{ vendedor.id }})">
+                                                            <i class="fas fa-file-pdf"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Chefs tab -->
+                            <div class="tab-pane fade" id="chefs" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Chef</th>
+                                                <th>Email</th>
+                                                <th>Teléfono</th>
+                                                <th>Pedidos Preparados</th>
+                                                <th>Especialidad</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for chef in chefs %}
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-chef-hat fa-2x text-warning me-2"></i>
+                                                        <div>
+                                                            <strong>{{ chef.nombre }}</strong>
+                                                            <br><small class="text-muted">ID: {{ chef.id }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{{ chef.email }}</td>
+                                                <td>{{ chef.telefono or 'No registrado' }}</td>
+                                                <td>
+                                                    <span class="badge bg-success">{{ chef.pedidos_preparados_mes }}</span> pedidos
+                                                </td>
+                                                <td>
+                                                    <span class="badge role-badge-chef">Panadería Artesanal</span>
+                                                </td>
+                                                <td>
+                                                    {% if chef.activo %}
+                                                        <span class="badge bg-success">Activo</span>
+                                                    {% else %}
+                                                        <span class="badge bg-danger">Inactivo</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button class="btn btn-sm btn-info" onclick="verDetalle({{ chef.id }})">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-warning" onclick="editarPersonal({{ chef.id }})">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for new personal -->
+    <div class="modal fade" id="nuevoPersonalModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-plus"></i> Agregar Nuevo Personal
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('usuarios.crear') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre Completo</label>
+                            <input type="text" class="form-control" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" name="telefono">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rol</label>
+                            <select class="form-control" name="rol" required>
+                                <option value="">Seleccionar rol...</option>
+                                <option value="vendedor">Vendedor</option>
+                                <option value="chef">Chef</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-gold">Crear Personal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function verDetalle(userId) {
+            window.location.href = `/usuarios/${userId}`;
+        }
+
+        function editarPersonal(userId) {
+            window.location.href = `/usuarios/${userId}/editar`;
+        }
+
+        function descargarReporteVendedor(vendedorId) {
+            window.open(`/reportes/vendedor/${vendedorId}/pdf`, '_blank');
+        }
+
+        function descargarReporteGeneral() {
+            window.open('/reportes/personal/pdf', '_blank');
+        }
+
+        // Auto-refresh statistics every 5 minutes
+        setInterval(function() {
+            location.reload();
+        }, 300000);
+    </script>
+</body>
+</html>

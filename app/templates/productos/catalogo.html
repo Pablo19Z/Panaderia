@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if categoria_actual %}
+{{ categoria_actual.nombre }} - Migas de oro Dorè
+{% else %}
+Productos - Migas de oro Dorè
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="brand-title display-5">
+                {% if categoria_actual %}
+                    {{ categoria_actual.nombre }}
+                {% else %}
+                    Nuestros Productos
+                {% endif %}
+            </h1>
+            <p class="lead text-muted">
+                {% if categoria_actual %}
+                    {{ categoria_actual.descripcion }}
+                {% else %}
+                    Descubre toda nuestra variedad de productos artesanales
+                {% endif %}
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <!-- Fixed breadcrumb link to use correct route -->
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item active">Productos</li>
+                    {% if categoria_actual %}
+                    <li class="breadcrumb-item active">{{ categoria_actual.nombre }}</li>
+                    {% endif %}
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Filtros y Búsqueda -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form method="GET" class="d-flex gap-3">
+                <div class="flex-grow-1">
+                    <input type="text" class="form-control" name="q" 
+                           placeholder="Buscar productos..." 
+                           value="{{ busqueda or '' }}">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+                {% if busqueda or categoria_actual %}
+                <a href="{{ url_for('productos.catalogo') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Limpiar
+                </a>
+                {% endif %}
+            </form>
+        </div>
+        <div class="col-md-4">
+            <!-- Updated category filter dropdown to show current selection -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-filter me-2"></i>
+                    {% if categoria_actual %}
+                        {{ categoria_actual.nombre }}
+                    {% else %}
+                        Filtrar por Categoría
+                    {% endif %}
+                </button>
+                <ul class="dropdown-menu w-100">
+                    <li><a class="dropdown-item {% if not categoria_actual %}active{% endif %}" 
+                           href="{{ url_for('productos.catalogo') }}">Todas las categorías</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    {% for categoria in categorias %}
+                    <li>
+                        <!-- Fixed category link to use categoria.id instead of categoria[0] -->
+                        <a class="dropdown-item {% if categoria_actual and categoria_actual.id == categoria.id %}active{% endif %}" 
+                           href="{{ url_for('productos.catalogo', categoria=categoria.id) }}">
+                            {{ categoria.nombre }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Resultados -->
+    <div class="row mb-3">
+        <div class="col">
+            <p class="text-muted">
+                <i class="fas fa-info-circle me-1"></i>
+                Mostrando {{ productos|length }} producto(s)
+                {% if busqueda %}
+                    para "{{ busqueda }}"
+                {% endif %}
+                {% if categoria_actual %}
+                    <!-- Fixed to use categoria_actual.nombre instead of categoria_actual[1] -->
+                    en {{ categoria_actual.nombre }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    
+    <!-- Grid de Productos -->
+    {% if productos %}
+    <div class="row g-4">
+        {% for producto in productos %}
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card h-100 producto-card">
+                <div class="position-relative">
+                    <!-- Cambié producto[6] por producto.imagen_url y producto[0] por producto.id -->
+                    <img src="{{ producto.imagen_url or '/static/images/productos/producto_' + producto.id|string + '.jpg' }}" 
+                         alt="{{ producto.nombre }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <!-- Cambié producto[3] por producto.precio -->
+                        <span class="badge bg-primary fs-6">${{ "%.2f"|format(producto.precio) }}</span>
+                    </div>
+                    <!-- Cambié producto[5] por producto.stock -->
+                    {% if producto.stock <= 5 %}
+                    <div class="position-absolute top-0 start-0 m-2">
+                        <span class="badge bg-warning text-dark">¡Pocas unidades!</span>
+                    </div>
+                    {% elif producto.stock == 0 %}
+                    <div class="position-absolute top-0 start-0 m-2">
+                        <span class="badge bg-danger">Agotado</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <!-- Cambié producto[1] por producto.nombre -->
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        <!-- Cambié producto[2] por producto.descripcion -->
+                        {{ producto.descripcion[:80] }}{% if producto.descripcion|length > 80 %}...{% endif %}
+                    </p>
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <!-- Cambié producto[8] por producto.categoria_nombre -->
+                            <i class="fas fa-tag me-1"></i>{{ producto.categoria_nombre or 'General' }}
+                        </small>
+                        <small class="text-muted float-end">
+                            <!-- Cambié producto[5] por producto.stock -->
+                            <i class="fas fa-boxes me-1"></i>{{ producto.stock }} disponibles
+                        </small>
+                    </div>
+                    <div class="d-flex gap-2 mb-2">
+                        <!-- Added conditional styling for favorite button based on favorite status -->
+                        {% set es_favorito = producto.id|string in favoritos_ids %}
+                        <button class="btn btn-sm favorito-btn {% if es_favorito %}btn-warning{% else %}btn-outline-primary{% endif %}" 
+                                onclick="agregarAFavoritos({{ producto.id }}, this)" 
+                                data-producto-id="{{ producto.id }}"
+                                data-es-favorito="{{ 'true' if es_favorito else 'false' }}"
+                                {% if producto.stock == 0 %}disabled{% endif %}>
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <!-- Added quantity selector and improved cart button -->
+                        <div class="input-group input-group-sm flex-grow-1">
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="cambiarCantidadCatalogo({{ producto.id }}, -1)"
+                                    {% if producto.stock == 0 %}disabled{% endif %}>
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="form-control text-center" 
+                                   id="cantidad-{{ producto.id }}" 
+                                   value="1" 
+                                   min="1" 
+                                   max="{{ producto.stock }}"
+                                   {% if producto.stock == 0 %}disabled{% endif %}>
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="cambiarCantidadCatalogo({{ producto.id }}, 1)"
+                                    {% if producto.stock == 0 %}disabled{% endif %}>
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="btn btn-primary" onclick="agregarAlCarritoConCantidad({{ producto.id }})"
+                                    {% if producto.stock == 0 %}disabled{% endif %}>
+                                <i class="fas fa-cart-plus me-1"></i>Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Cambié producto[0] por producto.id -->
+                    <a href="{{ url_for('productos.detalle', producto_id=producto.id) }}" 
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-eye me-1"></i>Ver Detalles
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h3 class="text-muted">No se encontraron productos</h3>
+        <p class="text-muted">
+            {% if busqueda %}
+                No hay productos que coincidan con "{{ busqueda }}"
+            {% else %}
+                No hay productos disponibles en esta categoría
+            {% endif %}
+        </p>
+        <a href="{{ url_for('productos.catalogo') }}" class="btn btn-primary">
+            <i class="fas fa-arrow-left me-2"></i>Ver Todos los Productos
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function agregarAFavoritos(productoId, button) {
+        const esFavorito = button.getAttribute('data-es-favorito') === 'true';
+        
+        fetch('/api/favoritos/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                producto_id: productoId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update button appearance based on new state
+                if (data.es_favorito) {
+                    // Now is favorite - make it yellow
+                    button.className = 'btn btn-sm favorito-btn btn-warning';
+                    button.setAttribute('data-es-favorito', 'true');
+                } else {
+                    // No longer favorite - make it outline
+                    button.className = 'btn btn-sm favorito-btn btn-outline-primary';
+                    button.setAttribute('data-es-favorito', 'false');
+                }
+                
+                const message = data.es_favorito ? 'Agregado a favoritos' : 'Eliminado de favoritos';
+                window.mostrarNotificacion(message, 'success');
+            } else {
+                window.mostrarNotificacion(data.message || 'Error al gestionar favoritos', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            window.mostrarNotificacion('Error al gestionar favoritos', 'error');
+        });
+    }
+    
+    function cambiarCantidadCatalogo(productoId, delta) {
+        const cantidadInput = document.getElementById(`cantidad-${productoId}`);
+        const nuevaCantidad = parseInt(cantidadInput.value) + delta;
+        const maxCantidad = parseInt(cantidadInput.max);
+        
+        if (nuevaCantidad >= 1 && nuevaCantidad <= maxCantidad) {
+            cantidadInput.value = nuevaCantidad;
+        }
+    }
+    
+    function agregarAlCarritoConCantidad(productoId) {
+        const cantidadInput = document.getElementById(`cantidad-${productoId}`);
+        const cantidad = parseInt(cantidadInput.value);
+        
+        // Use the global function from base.html
+        agregarAlCarrito(productoId, cantidad);
+    }
+    
+    // Efecto hover para las cards
+    document.querySelectorAll('.producto-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+{% endblock %}

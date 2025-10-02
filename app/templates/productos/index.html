@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/placeholder.svg?height=600&width=1200') center/cover;">
+    <div class="container">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6">
+                <h1 class="display-3 brand-title mb-4">Migas de oro Dorè</h1>
+                <p class="lead mb-4 text-light">
+                    Panadería artesanal donde cada producto es elaborado con amor, 
+                    tradición familiar y los mejores ingredientes naturales.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('productos.catalogo') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-cookie-bite me-2"></i>Ver Productos
+                    </a>
+                    {% if not session.user_id %}
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Únete
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="/placeholder.svg?height=400&width=400" 
+                     alt="Productos artesanales" class="img-fluid rounded-3 shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categorías Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="brand-title display-5 mb-3">Nuestras Especialidades</h2>
+            <p class="lead text-muted">Descubre la variedad de productos artesanales que tenemos para ti</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for categoria in categorias %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 categoria-card" style="cursor: pointer;" onclick="window.location.href='{{ url_for('productos.catalogo', categoria=categoria[0]) }}'">
+                    <div class="card-img-top position-relative overflow-hidden" style="height: 200px;">
+                        <img src="/placeholder.svg?height=200&width=300" 
+                             alt="{{ categoria[1] }}" class="w-100 h-100 object-fit-cover">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-25 d-flex align-items-center justify-content-center">
+                            <h4 class="text-white text-center">{{ categoria[1] }}</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-muted">{{ categoria[2] }}</p>
+                        <div class="text-end">
+                            <small class="text-primary">Ver productos <i class="fas fa-arrow-right"></i></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Productos Destacados -->
+<section class="py-5 bg-dark">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="brand-title display-5 mb-3">Productos Destacados</h2>
+            <p class="lead text-muted">Los favoritos de nuestros clientes</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for producto in productos %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 producto-card">
+                    <div class="position-relative">
+                        <img src="/placeholder.svg?height=250&width=300" 
+                             alt="{{ producto.nombre }}" class="card-img-top" style="height: 250px; object-fit: cover;">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-primary fs-6">${{ "%.2f"|format(producto.precio) }}</span>
+                        </div>
+                        {% if producto.stock <= 5 %}
+                        <div class="position-absolute top-0 start-0 m-2">
+                            <span class="badge bg-warning text-dark">¡Últimas unidades!</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ producto.nombre }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ producto.descripcion }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <small class="text-muted">
+                                <i class="fas fa-tag me-1"></i>{{ producto.categoria or 'General' }}
+                            </small>
+                            <small class="text-muted">
+                                <i class="fas fa-boxes me-1"></i>Stock: {{ producto.stock }}
+                            </small>
+                        </div>
+                        <div class="mt-3 d-flex gap-2">
+                            {% set es_favorito = producto.id|string in favoritos_ids %}
+                            <button class="btn btn-sm flex-fill favorito-btn {% if es_favorito %}btn-warning{% else %}btn-outline-primary{% endif %}" 
+                                    onclick="agregarAFavoritos({{ producto.id }}, this)"
+                                    data-producto-id="{{ producto.id }}"
+                                    data-es-favorito="{{ 'true' if es_favorito else 'false' }}">
+                                <i class="fas fa-heart me-1"></i>
+                                {% if es_favorito %}En Favoritos{% else %}Favorito{% endif %}
+                            </button>
+                            <button class="btn btn-primary btn-sm flex-fill" onclick="agregarAlCarrito({{ producto.id }})">
+                                <i class="fas fa-cart-plus me-1"></i>Al Carrito
+                            </button>
+                        </div>
+                        <div class="mt-2">
+                            <a href="{{ url_for('productos.detalle', producto_id=producto.id) }}" class="btn btn-outline-secondary btn-sm w-100">
+                                <i class="fas fa-eye me-1"></i>Ver Detalles
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{{ url_for('productos.catalogo') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-th-large me-2"></i>Ver Todos los Productos
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Sobre Nosotros -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <img src="/placeholder.svg?height=400&width=500" 
+                     alt="Nuestro proceso artesanal" class="img-fluid rounded-3 shadow">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="brand-title display-5 mb-4">Nuestra Historia</h2>
+                <p class="lead mb-4">
+                    En <strong>Migas de oro Dorè</strong>, cada producto cuenta una historia de tradición, 
+                    pasión y dedicación. Desde 1985, nuestra familia ha perfeccionado el arte de la 
+                    panificación artesanal.
+                </p>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-award fa-2x text-primary mb-2"></i>
+                            <h5>Calidad Premium</h5>
+                            <p class="text-muted small">Ingredientes seleccionados</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-clock fa-2x text-primary mb-2"></i>
+                            <h5>Tradición</h5>
+                            <p class="text-muted small">Más de 35 años</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-heart fa-2x text-primary mb-2"></i>
+                            <h5>Hecho con Amor</h5>
+                            <p class="text-muted small">Cada producto único</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-shipping-fast fa-2x text-primary mb-2"></i>
+                            <h5>Entrega Rápida</h5>
+                            <p class="text-muted small">Siempre fresco</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function agregarAFavoritos(productoId, button) {
+        console.log("[v0] Agregando a favoritos:", productoId);
+        
+        fetch('/api/favoritos/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                producto_id: productoId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("[v0] Respuesta del servidor:", data);
+            
+            if (data.success) {
+                if (data.es_favorito) {
+                    // Now is favorite - make it yellow/warning
+                    button.className = 'btn btn-sm flex-fill favorito-btn btn-warning';
+                    button.innerHTML = '<i class="fas fa-heart me-1"></i>En Favoritos';
+                    button.setAttribute('data-es-favorito', 'true');
+                } else {
+                    // No longer favorite - make it outline
+                    button.className = 'btn btn-sm flex-fill favorito-btn btn-outline-primary';
+                    button.innerHTML = '<i class="fas fa-heart me-1"></i>Favorito';
+                    button.setAttribute('data-es-favorito', 'false');
+                }
+                
+                const message = data.es_favorito ? 'Agregado a favoritos' : 'Eliminado de favoritos';
+                mostrarNotificacion(message, 'success');
+                
+                console.log("[v0] Estado actualizado:", data.es_favorito ? 'favorito' : 'no favorito');
+            } else {
+                console.log("[v0] Error del servidor:", data.message);
+                mostrarNotificacion(data.message || 'Error al gestionar favoritos', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('[v0] Error en fetch:', error);
+            mostrarNotificacion('Error al gestionar favoritos', 'error');
+        });
+    }
+    
+    function agregarAlCarrito(productoId) {
+        window.agregarAlCarrito(productoId, 1);
+    }
+    
+    // Efecto hover para las cards
+    document.querySelectorAll('.categoria-card, .producto-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+{% endblock %}

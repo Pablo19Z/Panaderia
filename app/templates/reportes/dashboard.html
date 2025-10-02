@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard de Reportes - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background-color: #1a1a1a; min-height: 100vh; color: #ffffff; padding: 2rem;">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 style="color: #d4af37; font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 5px;">
+                Dashboard de Reportes
+            </h1>
+            <p style="color: #cccccc; margin: 0;">Análisis de ventas y rendimiento - {{ mes_actual }} {{ año_actual }}</p>
+        </div>
+        <div>
+            <a href="{{ url_for('dashboard.admin') }}" class="btn me-2" style="background-color: #2196F3; color: #ffffff;">
+                <i class="fas fa-arrow-left me-1"></i>Volver al Dashboard
+            </a>
+            <button class="btn" style="background-color: #d4af37; color: #1a1a1a;" onclick="window.print()">
+                <i class="fas fa-print me-1"></i>Imprimir
+            </button>
+        </div>
+    </div>
+
+    <!-- Métricas Principales -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card" style="background-color: #2d2d2d; border: 2px solid #4CAF50;">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-2x mb-2" style="color: #4CAF50;"></i>
+                    <h3 style="color: #ffffff;">{{ ventas_diarias|length }}</h3>
+                    <p style="color: #cccccc; margin: 0;">Días con Ventas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card" style="background-color: #2d2d2d; border: 2px solid #2196F3;">
+                <div class="card-body text-center">
+                    <i class="fas fa-star fa-2x mb-2" style="color: #2196F3;"></i>
+                    <h3 style="color: #ffffff;">{{ productos_mas_vendidos|length }}</h3>
+                    <p style="color: #cccccc; margin: 0;">Productos Activos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card" style="background-color: #2d2d2d; border: 2px solid #FF9800;">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-2x mb-2" style="color: #FF9800;"></i>
+                    <h3 style="color: #ffffff;">{{ vendedores_top|length }}</h3>
+                    <p style="color: #cccccc; margin: 0;">Vendedores Activos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card" style="background-color: #2d2d2d; border: 2px solid #d4af37;">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar fa-2x mb-2" style="color: #d4af37;"></i>
+                    <h3 style="color: #ffffff;">{{ mes_actual }}</h3>
+                    <p style="color: #cccccc; margin: 0;">Período Actual</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos y Tablas -->
+    <div class="row g-4">
+        <!-- Ventas Diarias -->
+        <div class="col-md-8">
+            <div class="card" style="background-color: #2d2d2d; border: 2px solid #4CAF50;">
+                <div class="card-header" style="background-color: #388E3C; color: #ffffff;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Ventas Diarias del Mes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if ventas_diarias %}
+                        <div class="table-responsive">
+                            <table class="table table-dark">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid #4CAF50;">
+                                        <th style="color: #4CAF50;">Fecha</th>
+                                        <th style="color: #4CAF50;">Pedidos</th>
+                                        <th style="color: #4CAF50;">Total</th>
+                                        <th style="color: #4CAF50;">Promedio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for venta in ventas_diarias %}
+                                    <tr>
+                                        <td style="color: #ffffff;">{{ venta.fecha }}</td>
+                                        <td style="color: #ffffff;">{{ venta.pedidos }}</td>
+                                        <td style="color: #4CAF50; font-weight: bold;">${{ "%.2f"|format(venta.total) }}</td>
+                                        <td style="color: #cccccc;">${{ "%.2f"|format(venta.total / venta.pedidos) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-bar fa-3x mb-3" style="color: #666;"></i>
+                            <p style="color: #cccccc;">No hay datos de ventas para mostrar</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Vendedores -->
+        <div class="col-md-4">
+            <div class="card" style="background-color: #2d2d2d; border: 2px solid #FF9800;">
+                <div class="card-header" style="background-color: #F57C00; color: #ffffff;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy me-2"></i>Top Vendedores
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if vendedores_top %}
+                        {% for vendedor in vendedores_top %}
+                        <div class="d-flex justify-content-between align-items-center mb-3 p-2" 
+                             style="background-color: #1a1a1a; border-radius: 8px; border-left: 4px solid #FF9800;">
+                            <div>
+                                <div style="color: #ffffff; font-weight: bold;">{{ vendedor.nombre }}</div>
+                                <small style="color: #cccccc;">{{ vendedor.total_pedidos }} pedidos</small>
+                            </div>
+                            <div class="text-end">
+                                <div style="color: #FF9800; font-weight: bold;">${{ "%.0f"|format(vendedor.total_ventas) }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-2x mb-2" style="color: #666;"></i>
+                            <p style="color: #cccccc;">No hay datos de vendedores</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos Más Vendidos -->
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <div class="card" style="background-color: #2d2d2d; border: 2px solid #2196F3;">
+                <div class="card-header" style="background-color: #1976D2; color: #ffffff;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-star me-2"></i>Productos Más Vendidos del Mes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if productos_mas_vendidos %}
+                        <div class="row g-3">
+                            {% for producto in productos_mas_vendidos[:6] %}
+                            <div class="col-md-4">
+                                <div class="card" style="background-color: #1a1a1a; border: 1px solid #2196F3;">
+                                    <div class="card-body text-center">
+                                        <img src="{{ producto.imagen_url }}" class="mb-2" 
+                                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                        <h6 style="color: #ffffff;">{{ producto.nombre }}</h6>
+                                        <p style="color: #2196F3; font-weight: bold; margin: 0;">
+                                            {{ producto.total_vendido }} vendidos
+                                        </p>
+                                        <small style="color: #cccccc;">${{ "%.2f"|format(producto.precio) }} c/u</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-box fa-3x mb-3" style="color: #666;"></i>
+                            <p style="color: #cccccc;">No hay datos de productos para mostrar</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <div class="card" style="background-color: #2d2d2d; border: 2px solid #d4af37;">
+                <div class="card-header" style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); color: #1a1a1a;">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-download me-2"></i>Generar Reportes PDF
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <a href="{{ url_for('reportes.reporte_personal_pdf') }}" 
+                               class="btn w-100" style="background-color: #4CAF50; color: #ffffff; padding: 15px;">
+                                <i class="fas fa-users me-2"></i>Reporte de Personal<br>
+                                <small style="opacity: 0.9;">Rendimiento del equipo</small>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn w-100" style="background-color: #2196F3; color: #ffffff; padding: 15px;" 
+                                    onclick="alert('Seleccione un vendedor específico desde la sección Personal')">
+                                <i class="fas fa-user me-2"></i>Reporte por Vendedor<br>
+                                <small style="opacity: 0.9;">Ventas individuales</small>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn w-100" style="background-color: #FF9800; color: #ffffff; padding: 15px;" 
+                                    onclick="alert('Funcionalidad próximamente')">
+                                <i class="fas fa-chart-pie me-2"></i>Reporte Completo<br>
+                                <small style="opacity: 0.9;">Análisis integral</small>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Funcionalidad adicional para el dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('[v0] Dashboard de reportes cargado correctamente');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,939 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Administrativo - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<!-- Implementando diseño completo del dashboard administrativo con todas las funcionalidades -->
+<!-- Actualizando colores para que sean más brillantes y llamativos -->
+<div class="container-fluid" style="background-color: #1a1a1a; min-height: 100vh; color: #ffffff;">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 p-0">
+            <div class="d-flex flex-column vh-100" style="background-color: #2d2d2d; border-right: 1px solid #3998b8;">
+                <!-- Profile Section -->
+                <div class="text-center p-4" style="border-bottom: 1px solid #3998b8;">
+                    <div class="position-relative d-inline-block mb-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 80px; height: 80px; background-color: #2196F3; color: #ffffff;">
+                            <i class="fas fa-user-shield fa-2x"></i>
+                        </div>
+                    </div>
+                    <h5 class="mb-1" style="color: #ffffff;">
+                        <i class="fas fa-crown me-2" style="color: #FFD700;"></i>{{ usuario.nombre }}
+                    </h5>
+                    <p class="mb-2" style="color: #cccccc; font-size: 0.9rem;">{{ usuario.email }}</p>
+                    <span class="badge" style="background-color: #2196F3; color: #ffffff;">Administrador</span>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-grow-1">
+                    <div class="nav nav-pills flex-column p-3" id="admin-tabs" role="tablist">
+                        <!-- Arreglando estilos de navegación para que se actualicen dinámicamente -->
+                        <button class="nav-link active mb-1 text-start" id="centro-control-tab" data-bs-toggle="pill" 
+                                data-bs-target="#centro-control" type="button" role="tab" 
+                                style="background-color: #2196F3; color: #ffffff; border: none; padding: 12px 16px;">
+                            <i class="fas fa-desktop me-2" style="font-size: 1.1rem;"></i>Centro de Control
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="personal-tab" data-bs-toggle="pill" 
+                                data-bs-target="#personal" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: transparent; padding: 12px 16px;">
+                            <i class="fas fa-users me-2" style="font-size: 1.1rem;"></i>Personal
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="clientes-tab" data-bs-toggle="pill" 
+                                data-bs-target="#clientes" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: transparent; padding: 12px 16px;">
+                            <i class="fas fa-user-friends me-2" style="font-size: 1.1rem;"></i>Clientes
+                        </button>
+                        <!-- Eliminando la sección de Productos del menú lateral -->
+                        <button class="nav-link mb-1 text-start" id="pedidos-tab" data-bs-toggle="pill" 
+                                data-bs-target="#pedidos" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: transparent; padding: 12px 16px;">
+                            <i class="fas fa-shopping-bag me-2" style="font-size: 1.1rem;"></i>Pedidos
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="reportes-tab" data-bs-toggle="pill" 
+                                data-bs-target="#reportes" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: transparent; padding: 12px 16px;">
+                            <i class="fas fa-chart-bar me-2" style="font-size: 1.1rem;"></i>Reportes
+                        </button>
+                        <button class="nav-link mb-1 text-start" id="sistema-tab" data-bs-toggle="pill" 
+                                data-bs-target="#sistema" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: transparent; padding: 12px 16px;">
+                            <i class="fas fa-cog me-2" style="font-size: 1.1rem;"></i>Sistema
+                        </button>
+                        <!-- Adding Historia tab for managing historia page images -->
+                        <button class="nav-link mb-1 text-start" id="historia-tab" data-bs-toggle="pill" 
+                                data-bs-target="#historia" type="button" role="tab"
+                                style="color: #ffffff; border: 1px solid #444; background-color: transparent; padding: 12px 16px;">
+                            <i class="fas fa-images me-2" style="font-size: 1.1rem;"></i>Historia
+                        </button>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 p-4">
+            <div class="tab-content" id="admin-tabContent">
+                <!-- Centro de Control Tab -->
+                <div class="tab-pane fade show active" id="centro-control" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h1 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 5px;">
+                                Centro de Control Administrativo
+                            </h1>
+                            <p style="color: #888; margin: 0; font-size: 1rem;">Panel de monitoreo y gestión integral - Migas de oro Dorè</p>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge" style="background-color: #4CAF50; color: #ffffff; padding: 8px 12px; font-size: 0.9rem;">
+                                <i class="fas fa-circle me-1" style="color: #81C784; font-size: 0.7rem;"></i>Sistema Operativo
+                            </div>
+                            <div class="mt-1">
+                                <small style="color: #cccccc;">Última actualización: {{ fecha_actual }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Métricas Principales -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="card h-100" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-body text-center p-3">
+                                    <div class="mb-2">
+                                        <i class="fas fa-users fa-2x" style="color: #4CAF50;"></i>
+                                    </div>
+                                    <h3 style="color: #ffffff; margin-bottom: 5px;">{{ estadisticas.total_usuarios or 5 }}</h3>
+                                    <p style="color: #cccccc; margin: 0; font-size: 0.9rem;">Usuarios Registrados</p>
+                                    <small style="color: #4CAF50;">↑ +12% este mes</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-body text-center p-3">
+                                    <div class="mb-2">
+                                        <i class="fas fa-shopping-bag fa-2x" style="color: #2196F3;"></i>
+                                    </div>
+                                    <h3 style="color: #ffffff; margin-bottom: 5px;">{{ estadisticas.ventas_hoy.cantidad or 6 }}</h3>
+                                    <p style="color: #cccccc; margin: 0; font-size: 0.9rem;">Productos Activos</p>
+                                    <small style="color: #2196F3;">📦 En inventario</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-body text-center p-3">
+                                    <div class="mb-2">
+                                        <i class="fas fa-shopping-cart fa-2x" style="color: #FF9800;"></i>
+                                    </div>
+                                    <h3 style="color: #ffffff; margin-bottom: 5px;">{{ estadisticas.pedidos_por_estado.procesado or 0 }}</h3>
+                                    <p style="color: #cccccc; margin: 0; font-size: 0.9rem;">Pedidos Procesados Hoy</p>
+                                    <small style="color: #FF9800;">⏱ Tiempo real</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-body text-center p-3">
+                                    <div class="mb-2">
+                                        <i class="fas fa-dollar-sign fa-2x" style="color: #4CAF50;"></i>
+                                    </div>
+                                    <h3 style="color: #ffffff; margin-bottom: 5px;">${{ "%.0f"|format(estadisticas.ventas_hoy.total or 0) }}</h3>
+                                    <p style="color: #cccccc; margin: 0; font-size: 0.9rem;">Ingresos del Día</p>
+                                    <small style="color: #4CAF50;">+6% vs ayer</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Control Operativo -->
+                    <div class="row g-4 mb-3">
+                        <div class="col-md-8">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-header" style="background-color: #1976D2; color: #ffffff; border-bottom: 1px solid #2196F3;">
+                                    <h5 class="mb-0" style="font-family: 'Dancing Script', cursive; font-size: 1.4rem;">
+                                        <i class="fas fa-bolt me-2"></i>Centro de Comando Operativo
+                                    </h5>
+                                    <small style="color: #E3F2FD;">Acciones rápidas y gestión de operaciones</small>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <button class="btn w-100" style="background-color: #4CAF50; color: #ffffff; padding: 15px; border: 1px solid #66BB6A;" onclick="mostrarModalCrearEmpleado()">
+                                                <i class="fas fa-user-plus me-2"></i>Crear Personal<br>
+                                                <small style="opacity: 0.9;">Chef, Vendedor, Cocinero</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a href="{{ url_for('productos.crear_producto') }}" class="btn w-100" style="background-color: #2196F3; color: #ffffff; padding: 15px; border: 1px solid #42A5F5; text-decoration: none; display: block;">
+                                                <i class="fas fa-plus me-2"></i>Nuevo Producto<br>
+                                                <small style="opacity: 0.9;">Agregar al Inventario</small>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn w-100" style="background-color: #FF9800; color: #ffffff; padding: 15px; border: 1px solid #FFB74D;" onclick="alert('Funcionalidad próximamente')">
+                                                <i class="fas fa-chart-line me-2"></i>Generar Reporte<br>
+                                                <small style="opacity: 0.9;">Análisis de Ventas</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <!-- Cambiando Configuración por Gestión de Productos -->
+                                            <a href="{{ url_for('productos.gestionar_productos') }}" class="btn w-100" style="background-color: #9C27B0; color: #ffffff; padding: 15px; border: 1px solid #BA68C8; text-decoration: none; display: block;">
+                                                <i class="fas fa-box me-2"></i>Gestión de Productos<br>
+                                                <small style="opacity: 0.9;">Administrar Inventario</small>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #F44336;">
+                                <div class="card-header" style="background-color: #D32F2F; color: #ffffff; border-bottom: 1px solid #F44336;">
+                                    <h5 class="mb-0" style="font-family: 'Dancing Script', cursive; font-size: 1.4rem;">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Alertas del Sistema
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert" style="background-color: #FFF3E0; color: #E65100; border: 1px solid #FFB74D; margin-bottom: 10px; padding: 10px;">
+                                        <i class="fas fa-boxes me-2"></i>Stock Bajo: 3 productos
+                                    </div>
+                                    <div class="alert" style="background-color: #E3F2FD; color: #0D47A1; border: 1px solid #42A5F5; margin-bottom: 10px; padding: 10px;">
+                                        <i class="fas fa-clock me-2"></i>Pedidos Pendientes: {{ estadisticas.pedidos_por_estado.pendiente or 0 }}
+                                    </div>
+                                    <div class="alert" style="background-color: #E8F5E8; color: #2E7D32; border: 1px solid #66BB6A; margin-bottom: 0; padding: 10px;">
+                                        <i class="fas fa-check-circle me-2"></i>Sistema: Funcionando correctamente
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Tab -->
+                <div class="tab-pane fade" id="personal" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">Gestión de Personal</h2>
+                            <p style="color: #ffffff; margin: 0;">Administración de empleados: Chef y Vendedores</p>
+                        </div>
+                        <button class="btn" style="background-color: #4CAF50; color: #ffffff; border: 1px solid #66BB6A;" onclick="mostrarModalCrearEmpleado()">
+                            <i class="fas fa-user-plus me-1"></i>Nuevo Empleado
+                        </button>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-header text-center" style="background-color: #FF9800; color: #ffffff; border-bottom: 1px solid #FFB74D;">
+                                    <h4 style="font-family: 'Dancing Script', cursive; font-size: 1.6rem; margin: 0;">
+                                        <i class="fas fa-chef-hat me-2"></i>Chef
+                                    </h4>
+                                </div>
+                                <div class="card-body text-center">
+                                    <p style="color: #ffffff; margin-bottom: 15px;">Personal especializado en la preparación de productos</p>
+                                    <h2 style="color: #FF9800; font-size: 3rem; margin: 20px 0;">{{ estadisticas.total_chefs or 0 }}</h2>
+                                    <p style="color: #cccccc; margin: 0;">Empleados activos</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-header text-center" style="background-color: #4CAF50; color: #ffffff; border-bottom: 1px solid #66BB6A;">
+                                    <h4 style="font-family: 'Dancing Script', cursive; font-size: 1.6rem; margin: 0;">
+                                        <i class="fas fa-store me-2"></i>Vendedor
+                                    </h4>
+                                </div>
+                                <div class="card-body text-center">
+                                    <p style="color: #ffffff; margin-bottom: 15px;">Personal encargado de atención al cliente</p>
+                                    <h2 style="color: #4CAF50; font-size: 3rem; margin: 20px 0;">{{ estadisticas.total_vendedores or 0 }}</h2>
+                                    <p style="color: #cccccc; margin: 0;">Empleados activos</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clientes Tab -->
+                <div class="tab-pane fade" id="clientes" role="tabpanel">
+                    <!-- Actualizando sección de clientes con perfiles reales y estadísticas -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">
+                                <span style="color: #4CAF50;">Gestión de</span> Clientes
+                            </h2>
+                            <p style="color: #ffffff; margin: 0;">Base de clientes y análisis de comportamiento de compra</p>
+                        </div>
+                        <div>
+                            <button class="btn me-2" style="background-color: #4CAF50; color: #ffffff;" onclick="alert('Funcionalidad próximamente')">
+                                <i class="fas fa-user-plus me-1"></i>Nuevo Cliente
+                            </button>
+                            <button class="btn" style="background-color: #2196F3; color: #ffffff;" onclick="alert('Funcionalidad próximamente')">
+                                <i class="fas fa-download me-1"></i>Exportar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Estadísticas de Clientes -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 2px solid #4CAF50;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-2x mb-2" style="color: #4CAF50;"></i>
+                                    <h3 style="color: #ffffff;">127</h3>
+                                    <p style="color: #cccccc; margin: 0;">Total Clientes</p>
+                                    <small style="color: #4CAF50;">+8 este mes</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 2px solid #2196F3;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-shopping-cart fa-2x mb-2" style="color: #2196F3;"></i>
+                                    <h3 style="color: #ffffff;">89</h3>
+                                    <p style="color: #cccccc; margin: 0;">Clientes Activos</p>
+                                    <small style="color: #2196F3;">Con pedidos</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 2px solid #FF9800;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-star fa-2x mb-2" style="color: #FF9800;"></i>
+                                    <h3 style="color: #ffffff;">$2,450</h3>
+                                    <p style="color: #cccccc; margin: 0;">Promedio Gasto</p>
+                                    <small style="color: #FF9800;">Por cliente</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card" style="background-color: #2d2d2d; border: 2px solid #9C27B0;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-plus fa-2x mb-2" style="color: #9C27B0;"></i>
+                                    <h3 style="color: #ffffff;">8</h3>
+                                    <p style="color: #cccccc; margin: 0;">Nuevos</p>
+                                    <small style="color: #9C27B0;">Este mes</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Clientes -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="card" style="background-color: #2d2d2d; border: 2px solid #4CAF50;">
+                                <div class="card-header" style="background-color: #388E3C; color: #ffffff;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-trophy me-2"></i>Cliente VIP
+                                    </h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                             style="width: 60px; height: 60px; background-color: #4CAF50; color: #ffffff;">
+                                            <i class="fas fa-user fa-2x"></i>
+                                        </div>
+                                    </div>
+                                    <h5 style="color: #ffffff;">María González</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Agregando más clientes aquí -->
+                    </div>
+                </div>
+
+                <!-- Pedidos Tab -->
+                <div class="tab-pane fade" id="pedidos" role="tabpanel">
+                    <!-- Implementación de la sección de pedidos -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">
+                                <span style="color: #FF9800;">Gestión de</span> Pedidos
+                            </h2>
+                            <p style="color: #ffffff; margin: 0;">Administrar y monitorear pedidos</p>
+                        </div>
+                        <button class="btn" style="background-color: #2196F3; color: #ffffff;" onclick="alert('Funcionalidad próximamente')">
+                            <i class="fas fa-download me-1"></i>Exportar
+                        </button>
+                    </div>
+
+                    <!-- Lista de Pedidos -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-12">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                <div class="card-header" style="background-color: #FF9800; color: #ffffff; border-bottom: 1px solid #FFB74D;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-list me-2"></i>Pedidos Pendientes
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Implementación de la lista de pedidos aquí -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reportes Tab -->
+                <div class="tab-pane fade" id="reportes" role="tabpanel">
+                    <!-- Implementación de la sección de reportes -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">
+                                <span style="color: #4CAF50;">Generación de</span> Reportes
+                            </h2>
+                            <p style="color: #ffffff; margin: 0;">Análisis y estadísticas de ventas</p>
+                        </div>
+                        <button class="btn" style="background-color: #2196F3; color: #ffffff;" onclick="alert('Funcionalidad próximamente')">
+                            <i class="fas fa-download me-1"></i>Exportar
+                        </button>
+                    </div>
+
+                    <!-- Gráficos de Reportes -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-12">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                <div class="card-header" style="background-color: #4CAF50; color: #ffffff; border-bottom: 1px solid #66BB6A;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-chart-bar me-2"></i>Ventas Mensuales
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Implementación de gráficos de ventas aquí -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sistema Tab -->
+                <div class="tab-pane fade" id="sistema" role="tabpanel">
+                    <!-- Implementación completa de la sección de sistema con configuración de imagen de fondo -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">
+                                <span style="color: #9C27B0;">Configuración del</span> Sistema
+                            </h2>
+                            <p style="color: #ffffff; margin: 0;">Administrar ajustes y configuraciones del sistema</p>
+                        </div>
+                    </div>
+
+                    <!-- Configuraciones del Sistema -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-12">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #9C27B0;">
+                                <div class="card-header" style="background-color: #9C27B0; color: #ffffff; border-bottom: 1px solid #BA68C8;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-image me-2"></i>Imagen de Fondo del Hero
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="formConfiguracionHero">
+                                        <div class="mb-3">
+                                            <label class="form-label" style="color: #ffffff;">
+                                                <i class="fas fa-link me-2"></i>URL de la Imagen de Fondo
+                                            </label>
+                                            <input type="url" 
+                                                   class="form-control" 
+                                                   id="hero_background_url" 
+                                                   name="hero_background_url" 
+                                                   value="{{ hero_background_url }}"
+                                                   required 
+                                                   style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                                                   placeholder="https://ejemplo.com/imagen.jpg o /ruta/local/imagen.jpg">
+                                            <small class="form-text" style="color: #cccccc;">
+                                                Ingrese la URL completa de la imagen que desea usar como fondo en la página de inicio.
+                                                Puede ser una URL externa (https://...) o una ruta local (/static/...).
+                                            </small>
+                                        </div>
+                                        
+                                        <!-- Vista previa de la imagen -->
+                                        <div class="mb-3">
+                                            <label class="form-label" style="color: #ffffff;">
+                                                <i class="fas fa-eye me-2"></i>Vista Previa
+                                            </label>
+                                            <div class="position-relative" style="height: 200px; border-radius: 8px; overflow: hidden; border: 2px solid #9C27B0;">
+                                                <img id="preview_hero_image" 
+                                                     src="{{ hero_background_url }}" 
+                                                     alt="Vista previa" 
+                                                     style="width: 100%; height: 100%; object-fit: cover;">
+                                                <div class="position-absolute top-0 start-0 w-100 h-100" 
+                                                     style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)); display: flex; align-items: center; justify-content: center;">
+                                                    <h3 style="color: #ffffff; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                                                        Bienvenidos a Migas de oro Dorè
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn" style="background-color: #4CAF50; color: #ffffff;">
+                                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                                            </button>
+                                            <button type="button" class="btn" style="background-color: #2196F3; color: #ffffff;" onclick="actualizarVistaPrevia()">
+                                                <i class="fas fa-sync me-2"></i>Actualizar Vista Previa
+                                            </button>
+                                            <button type="button" class="btn" style="background-color: #FF9800; color: #ffffff;" onclick="restaurarPorDefecto()">
+                                                <i class="fas fa-undo me-2"></i>Restaurar Por Defecto
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Información adicional -->
+                        <div class="col-md-12">
+                            <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                <div class="card-header" style="background-color: #2196F3; color: #ffffff; border-bottom: 1px solid #42A5F5;">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>Información
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <p style="color: #ffffff; margin-bottom: 10px;">
+                                        <strong>Recomendaciones para la imagen de fondo:</strong>
+                                    </p>
+                                    <ul style="color: #cccccc;">
+                                        <li>Resolución recomendada: 1920x1080 píxeles o superior</li>
+                                        <li>Formato: JPG, PNG o WebP</li>
+                                        <li>Tamaño de archivo: Menor a 2MB para mejor rendimiento</li>
+                                        <li>La imagen debe tener buen contraste para que el texto sea legible</li>
+                                    </ul>
+                                    <p style="color: #ffffff; margin-top: 15px; margin-bottom: 10px;">
+                                        <strong>Ejemplos de URLs válidas:</strong>
+                                    </p>
+                                    <ul style="color: #cccccc;">
+                                        <li><code style="background-color: #1a1a1a; padding: 2px 6px; border-radius: 3px;">https://ejemplo.com/imagenes/panaderia.jpg</code></li>
+                                        <li><code style="background-color: #1a1a1a; padding: 2px 6px; border-radius: 3px;">/static/images/hero-background.jpg</code></li>
+                                        <li><code style="background-color: #1a1a1a; padding: 2px 6px; border-radius: 3px;">/placeholder.svg?height=600&width=1200</code></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adding Historia Tab for managing historia page images -->
+                <div class="tab-pane fade" id="historia" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 style="color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 5px;">
+                                <span style="color: #FF5722;">Imágenes de</span> Nuestra Historia
+                            </h2>
+                            <p style="color: #ffffff; margin: 0;">Administrar las imágenes de la página de historia</p>
+                        </div>
+                    </div>
+
+                    <!-- Formulario para gestionar imágenes de historia -->
+                    <form id="formHistoriaImages">
+                        <div class="row g-4">
+                            <!-- Imagen de Los Inicios -->
+                            <div class="col-md-6">
+                                <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF5722;">
+                                    <div class="card-header" style="background-color: #FF5722; color: #ffffff;">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-image me-2"></i>Los Inicios
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label" style="color: #ffffff;">URL de la Imagen</label>
+                                            <input type="url" class="form-control" name="inicios_image" 
+                                                   value="{{ historia_images.inicios_image if historia_images else '' }}"
+                                                   style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                                                   placeholder="https://ejemplo.com/imagen.jpg">
+                                        </div>
+                                        <div class="preview-container" style="height: 150px; border-radius: 8px; overflow: hidden; border: 2px solid #FF5722;">
+                                            <img src="{{ historia_images.inicios_image if historia_images else '/placeholder.svg?height=400&width=600' }}" 
+                                                 class="img-fluid w-100 h-100" style="object-fit: cover;" alt="Preview">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Imagen 1985 - Los Primeros Pasos -->
+                            <div class="col-md-6">
+                                <div class="card" style="background-color: #2d2d2d; border: 1px solid #4CAF50;">
+                                    <div class="card-header" style="background-color: #4CAF50; color: #ffffff;">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-image me-2"></i>1985 - Los Primeros Pasos
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label" style="color: #ffffff;">URL de la Imagen</label>
+                                            <input type="url" class="form-control" name="timeline_1985" 
+                                                   value="{{ historia_images.timeline_1985 if historia_images else '' }}"
+                                                   style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                                                   placeholder="https://ejemplo.com/imagen.jpg">
+                                        </div>
+                                        <div class="preview-container" style="height: 150px; border-radius: 8px; overflow: hidden; border: 2px solid #4CAF50;">
+                                            <img src="{{ historia_images.timeline_1985 if historia_images else '/placeholder.svg?height=150&width=200' }}" 
+                                                 class="img-fluid w-100 h-100" style="object-fit: cover;" alt="Preview">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Imagen 1995 - Primera Expansión -->
+                            <div class="col-md-6">
+                                <div class="card" style="background-color: #2d2d2d; border: 1px solid #2196F3;">
+                                    <div class="card-header" style="background-color: #2196F3; color: #ffffff;">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-image me-2"></i>1995 - Primera Expansión
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label" style="color: #ffffff;">URL de la Imagen</label>
+                                            <input type="url" class="form-control" name="timeline_1995" 
+                                                   value="{{ historia_images.timeline_1995 if historia_images else '' }}"
+                                                   style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                                                   placeholder="https://ejemplo.com/imagen.jpg">
+                                        </div>
+                                        <div class="preview-container" style="height: 150px; border-radius: 8px; overflow: hidden; border: 2px solid #2196F3;">
+                                            <img src="{{ historia_images.timeline_1995 if historia_images else '/placeholder.svg?height=150&width=200' }}" 
+                                                 class="img-fluid w-100 h-100" style="object-fit: cover;" alt="Preview">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Imagen 2010 - Segunda Generación -->
+                            <div class="col-md-6">
+                                <div class="card" style="background-color: #2d2d2d; border: 1px solid #FF9800;">
+                                    <div class="card-header" style="background-color: #FF9800; color: #ffffff;">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-image me-2"></i>2010 - Segunda Generación
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label" style="color: #ffffff;">URL de la Imagen</label>
+                                            <input type="url" class="form-control" name="timeline_2010" 
+                                                   value="{{ historia_images.timeline_2010 if historia_images else '' }}"
+                                                   style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                                                   placeholder="https://ejemplo.com/imagen.jpg">
+                                        </div>
+                                        <div class="preview-container" style="height: 150px; border-radius: 8px; overflow: hidden; border: 2px solid #FF9800;">
+                                            <img src="{{ historia_images.timeline_2010 if historia_images else '/placeholder.svg?height=150&width=200' }}" 
+                                                 class="img-fluid w-100 h-100" style="object-fit: cover;" alt="Preview">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Imagen 2024 - Era Digital -->
+                            <div class="col-md-6">
+                                <div class="card" style="background-color: #2d2d2d; border: 1px solid #9C27B0;">
+                                    <div class="card-header" style="background-color: #9C27B0; color: #ffffff;">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-image me-2"></i>2024 - Era Digital
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label" style="color: #ffffff;">URL de la Imagen</label>
+                                            <input type="url" class="form-control" name="timeline_2024" 
+                                                   value="{{ historia_images.timeline_2024 if historia_images else '' }}"
+                                                   style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                                                   placeholder="https://ejemplo.com/imagen.jpg">
+                                        </div>
+                                        <div class="preview-container" style="height: 150px; border-radius: 8px; overflow: hidden; border: 2px solid #9C27B0;">
+                                            <img src="{{ historia_images.timeline_2024 if historia_images else '/placeholder.svg?height=150&width=200' }}" 
+                                                 class="img-fluid w-100 h-100" style="object-fit: cover;" alt="Preview">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Imagen de Nuestros Valores -->
+                            <div class="col-md-6">
+                                <div class="card" style="background-color: #2d2d2d; border: 1px solid #00BCD4;">
+                                    <div class="card-header" style="background-color: #00BCD4; color: #ffffff;">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-image me-2"></i>Nuestros Valores
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label" style="color: #ffffff;">URL de la Imagen</label>
+                                            <input type="url" class="form-control" name="valores_image" 
+                                                   value="{{ historia_images.valores_image if historia_images else '' }}"
+                                                   style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                                                   placeholder="https://ejemplo.com/imagen.jpg">
+                                        </div>
+                                        <div class="preview-container" style="height: 150px; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4;">
+                                            <img src="{{ historia_images.valores_image if historia_images else '/placeholder.svg?height=400&width=600' }}" 
+                                                 class="img-fluid w-100 h-100" style="object-fit: cover;" alt="Preview">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn" style="background-color: #4CAF50; color: #ffffff;">
+                                <i class="fas fa-save me-2"></i>Guardar Todas las Imágenes
+                            </button>
+                            <button type="button" class="btn" style="background-color: #FF9800; color: #ffffff;" onclick="restaurarHistoriaDefecto()">
+                                <i class="fas fa-undo me-2"></i>Restaurar Por Defecto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear Empleado -->
+<div class="modal fade" id="modalCrearEmpleado" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #2d2d2d; border: 1px solid #444;">
+            <div class="modal-header" style="border-bottom: 1px solid #444;">
+                <h5 class="modal-title" style="color: #ffffff;">
+                    <i class="fas fa-user-plus me-2" style="color: #4CAF50;"></i>Nuevo Empleado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formCrearEmpleado">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #ffffff;">Nombre Completo</label>
+                        <input type="text" class="form-control" name="nombre" required 
+                               style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                               placeholder="Ingrese el nombre">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #ffffff;">Email</label>
+                        <input type="email" class="form-control" name="email" required 
+                               style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                               placeholder="Ingrese el email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #ffffff;">Cargo</label>
+                        <select class="form-select" name="cargo" required 
+                                style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;">
+                            <option value="">Seleccione el cargo</option>
+                            <option value="chef">Chef</option>
+                            <option value="vendedor">Vendedor</option>
+                        </select>
+                    </div>
+                    <!-- Agregando campo de contraseña para que el admin pueda establecerla -->
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #ffffff;">Contraseña</label>
+                        <input type="password" class="form-control" name="password" required 
+                               style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                               placeholder="Ingrese la contraseña"
+                               minlength="6">
+                        <small class="form-text" style="color: #cccccc;">Mínimo 6 caracteres</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #ffffff;">Teléfono (Opcional)</label>
+                        <input type="tel" class="form-control" name="telefono" 
+                               style="background-color: #1a1a1a; border: 1px solid #444; color: #ffffff;"
+                               placeholder="Ingrese el teléfono">
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #444;">
+                    <button type="button" class="btn" data-bs-dismiss="modal" 
+                            style="background-color: #6c757d; color: #ffffff;">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn" 
+                            style="background-color: #4CAF50; color: #ffffff;">
+                        <i class="fas fa-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Agregando JavaScript para navegación activa y funcionalidad de empleados -->
+<script>
+// Función para actualizar navegación activa
+function actualizarNavegacionActiva() {
+    const tabs = document.querySelectorAll('#admin-tabs .nav-link');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remover clase active de todos los tabs
+            tabs.forEach(t => {
+                t.classList.remove('active');
+                t.style.backgroundColor = 'transparent';
+                t.style.border = '1px solid #444';
+            });
+            
+            // Agregar clase active al tab clickeado
+            this.classList.add('active');
+            this.style.backgroundColor = '#2196F3';
+            this.style.border = 'none';
+        });
+    });
+}
+
+// Función para mostrar modal de crear empleado
+function mostrarModalCrearEmpleado() {
+    const modal = new bootstrap.Modal(document.getElementById('modalCrearEmpleado'));
+    modal.show();
+}
+
+// Función para crear empleado
+function crearEmpleado() {
+    const form = document.getElementById('formCrearEmpleado');
+    const formData = new FormData(form);
+    
+    fetch('/dashboard/crear_empleado', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`${data.message}`);
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearEmpleado'));
+            modal.hide();
+            form.reset();
+            location.reload(); // Recargar para actualizar estadísticas
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al crear empleado');
+    });
+}
+
+// Función para actualizar vista previa de la imagen de fondo
+function actualizarVistaPrevia() {
+    const url = document.getElementById('hero_background_url').value;
+    const preview = document.getElementById('preview_hero_image');
+    
+    if (url) {
+        preview.src = url;
+        preview.onerror = function() {
+            alert('No se pudo cargar la imagen. Verifica que la URL sea correcta.');
+        };
+    }
+}
+
+// Función para restaurar la imagen de fondo por defecto
+function restaurarPorDefecto() {
+    const urlInput = document.getElementById('hero_background_url');
+    const preview = document.getElementById('preview_hero_image');
+    const defaultUrl = '/placeholder.svg?height=600&width=1200';
+    
+    urlInput.value = defaultUrl;
+    preview.src = defaultUrl;
+}
+
+function restaurarHistoriaDefecto() {
+    if (confirm('¿Está seguro de restaurar todas las imágenes de historia a sus valores por defecto?')) {
+        const defaults = {
+            'inicios_image': '/placeholder.svg?height=400&width=600',
+            'timeline_1985': '/placeholder.svg?height=150&width=200',
+            'timeline_1995': '/placeholder.svg?height=150&width=200',
+            'timeline_2010': '/placeholder.svg?height=150&width=200',
+            'timeline_2024': '/placeholder.svg?height=150&width=200',
+            'valores_image': '/placeholder.svg?height=400&width=600'
+        };
+        
+        for (const [key, value] of Object.entries(defaults)) {
+            const input = document.querySelector(`input[name="${key}"]`);
+            if (input) {
+                input.value = value;
+                const preview = input.closest('.card-body').querySelector('img');
+                if (preview) preview.src = value;
+            }
+        }
+        
+        alert('Valores restaurados. Haga clic en "Guardar" para aplicar los cambios.');
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarNavegacionActiva();
+    
+    // Manejar envío del formulario de empleado
+    document.getElementById('formCrearEmpleado').addEventListener('submit', function(e) {
+        e.preventDefault();
+        crearEmpleado();
+    });
+    
+    const formConfigHero = document.getElementById('formConfiguracionHero');
+    if (formConfigHero) {
+        formConfigHero.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/dashboard/actualizar_configuracion', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✓ ' + data.message + '\n\nLa imagen de fondo se actualizará en la página de inicio.');
+                } else {
+                    alert('✗ Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('[v0] Error:', error);
+                alert('✗ Error al actualizar la configuración');
+            });
+        });
+    }
+    
+    const heroUrlInput = document.getElementById('hero_background_url');
+    if (heroUrlInput) {
+        heroUrlInput.addEventListener('change', actualizarVistaPrevia);
+    }
+
+    const formHistoriaImages = document.getElementById('formHistoriaImages');
+    if (formHistoriaImages) {
+        formHistoriaImages.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/dashboard/actualizar_historia_images', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✓ ' + data.message + '\n\nLas imágenes se actualizarán en la página de historia.');
+                } else {
+                    alert('✗ Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('[v0] Error:', error);
+                alert('✗ Error al actualizar las imágenes');
+            });
+        });
+        
+        const historiaInputs = formHistoriaImages.querySelectorAll('input[type="url"]');
+        historiaInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const preview = this.closest('.card-body').querySelector('img');
+                if (preview && this.value) {
+                    preview.src = this.value;
+                    preview.onerror = function() {
+                        alert('No se pudo cargar la imagen. Verifica que la URL sea correcta.');
+                    };
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

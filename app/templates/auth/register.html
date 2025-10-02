@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Registrarse - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-warning mb-3"></i>
+                        <h3 class="brand-title">Crear Cuenta</h3>
+                        <p class="text-muted">Únete a la familia Migas de oro Dorè</p>
+                    </div>
+                    
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Nombre Completo *
+                                </label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email *
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Contraseña *
+                                </label>
+                                <!-- Agregando contenedor para input de contraseña con botón de mostrar/ocultar -->
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fas fa-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted">Mínimo 6 caracteres</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="confirm_password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Confirmar Contraseña *
+                                </label>
+                                <!-- Agregando contenedor para input de confirmar contraseña con botón de mostrar/ocultar -->
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required minlength="6">
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                        <i class="fas fa-eye" id="toggleConfirmIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">
+                                    <!-- Haciendo el teléfono obligatorio para facturas -->
+                                    <i class="fas fa-phone me-2"></i>Teléfono *
+                                </label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                                <small class="text-muted">Requerido para facturas y entregas</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="direccion" class="form-label">
+                                    <!-- Haciendo la dirección obligatoria para entregas -->
+                                    <i class="fas fa-map-marker-alt me-2"></i>Dirección *
+                                </label>
+                                <input type="text" class="form-control" id="direccion" name="direccion" required>
+                                <small class="text-muted">Requerida para entregas a domicilio</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="text-muted">
+                                ¿Ya tienes cuenta? 
+                                <!-- Corregido url_for('login') a url_for('auth.login') -->
+                                <a href="{{ url_for('auth.login') }}" class="text-warning text-decoration-none">
+                                    Inicia sesión aquí
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    });
+
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const toggleConfirmIcon = document.getElementById('toggleConfirmIcon');
+        
+        if (confirmPasswordInput.type === 'password') {
+            confirmPasswordInput.type = 'text';
+            toggleConfirmIcon.classList.remove('fa-eye');
+            toggleConfirmIcon.classList.add('fa-eye-slash');
+        } else {
+            confirmPasswordInput.type = 'password';
+            toggleConfirmIcon.classList.remove('fa-eye-slash');
+            toggleConfirmIcon.classList.add('fa-eye');
+        }
+    });
+
+    // Validar que las contraseñas coincidan
+    document.getElementById('confirm_password').addEventListener('input', function() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = this.value;
+        
+        if (password !== confirmPassword) {
+            this.setCustomValidity('Las contraseñas no coinciden');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+</script>
+{% endblock %}

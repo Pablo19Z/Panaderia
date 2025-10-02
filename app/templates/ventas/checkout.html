@@ -1,0 +1,547 @@
+{% extends "base.html" %}
+
+{% block title %}Finalizar Compra - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Título principal con diseño elegante -->
+            <div class="text-center mb-5">
+                <h1 class="brand-title text-white" style="font-family: 'Dancing Script', cursive; font-size: 3.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                    Finalizar tu Pedido
+                </h1>
+                <p class="text-gold fs-5" style="font-family: 'Dancing Script', cursive;">
+                    Estás a un paso de disfrutar nuestros deliciosos productos
+                </p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <form method="POST" action="{{ url_for('ventas.procesar_pago') }}" id="checkoutForm">
+                        <!-- Sección de ubicación con dirección editable -->
+                        <div class="card mb-4 border-0 shadow-lg" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
+                            <div class="card-header bg-transparent border-0 pb-0">
+                                <h3 class="text-white mb-0" style="font-family: 'Dancing Script', cursive; font-size: 2rem;">
+                                    <i class="fas fa-map-marker-alt text-gold me-3"></i>
+                                    Información de Entrega
+                                </h3>
+                            </div>
+                            <div class="card-body pt-3">
+                                <div class="row">
+                                    <div class="col-md-12 mb-4">
+                                        <label for="direccion_entrega" class="form-label text-white fw-bold" style="font-family: 'Dancing Script', cursive; font-size: 1.3rem;">
+                                            Dirección de Entrega *
+                                        </label>
+                                        <textarea class="form-control bg-dark text-white border-gold" 
+                                                  id="direccion_entrega" 
+                                                  name="direccion_entrega" 
+                                                  rows="3" 
+                                                  required 
+                                                  placeholder="Ingresa tu dirección completa..."
+                                                  style="border: 2px solid #d4af37; border-radius: 10px; font-size: 1.1rem;">{{ usuario.direccion or '' }}</textarea>
+                                        <small class="text-gold">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Puedes editar tu dirección registrada si es necesario
+                                        </small>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="telefono_contacto" class="form-label text-white fw-bold" style="font-family: 'Dancing Script', cursive; font-size: 1.3rem;">
+                                            Teléfono de Contacto *
+                                        </label>
+                                        <input type="tel" 
+                                               class="form-control bg-dark text-white border-gold" 
+                                               id="telefono_contacto" 
+                                               name="telefono_contacto" 
+                                               required 
+                                               placeholder="Ej: +57 300 123 4567" 
+                                               value="{{ usuario.telefono or '' }}"
+                                               style="border: 2px solid #d4af37; border-radius: 10px; font-size: 1.1rem;">
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="notas" class="form-label text-white fw-bold" style="font-family: 'Dancing Script', cursive; font-size: 1.3rem;">
+                                            Notas Especiales
+                                        </label>
+                                        <textarea class="form-control bg-dark text-white border-gold" 
+                                                  id="notas" 
+                                                  name="notas" 
+                                                  rows="3" 
+                                                  placeholder="Instrucciones especiales para la entrega..."
+                                                  style="border: 2px solid #d4af37; border-radius: 10px; font-size: 1.1rem;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de fecha y hora con valores actuales editables -->
+                        <div class="card mb-4 border-0 shadow-lg" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
+                            <div class="card-header bg-transparent border-0 pb-0">
+                                <h3 class="text-white mb-0" style="font-family: 'Dancing Script', cursive; font-size: 2rem;">
+                                    <i class="fas fa-clock text-gold me-3"></i>
+                                    Fecha y Hora de Entrega
+                                </h3>
+                            </div>
+                            <div class="card-body pt-3">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="fecha_entrega" class="form-label text-white fw-bold" style="font-family: 'Dancing Script', cursive; font-size: 1.3rem;">
+                                            Fecha de Entrega *
+                                        </label>
+                                        <input type="date" 
+                                               class="form-control bg-dark text-white border-gold" 
+                                               id="fecha_entrega" 
+                                               name="fecha_entrega" 
+                                               required
+                                               style="border: 2px solid #d4af37; border-radius: 10px; font-size: 1.1rem;">
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="hora_entrega" class="form-label text-white fw-bold" style="font-family: 'Dancing Script', cursive; font-size: 1.3rem;">
+                                            Hora de Entrega *
+                                        </label>
+                                        <input type="time" 
+                                               class="form-control bg-dark text-white border-gold" 
+                                               id="hora_entrega" 
+                                               name="hora_entrega" 
+                                               required
+                                               style="border: 2px solid #d4af37; border-radius: 10px; font-size: 1.1rem;">
+                                    </div>
+                                </div>
+                                <div class="alert alert-warning bg-dark border-gold text-white">
+                                    <i class="fas fa-info-circle text-gold me-2"></i>
+                                    <strong>Horarios de entrega:</strong> Lunes a Domingo de 8:00 AM a 8:00 PM
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Métodos de pago mejorados con Nequi -->
+                        <div class="card mb-4 border-0 shadow-lg" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
+                            <div class="card-header bg-transparent border-0 pb-0">
+                                <h3 class="text-white mb-0" style="font-family: 'Dancing Script', cursive; font-size: 2rem;">
+                                    <i class="fas fa-credit-card text-gold me-3"></i>
+                                    Método de Pago
+                                </h3>
+                            </div>
+                            <div class="card-body pt-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="payment-option mb-3 p-3 rounded" style="border: 2px solid #d4af37; background: rgba(212, 175, 55, 0.1);">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="metodo_pago" id="efectivo" value="efectivo" checked>
+                                                <label class="form-check-label text-white fw-bold" for="efectivo" style="font-size: 1.2rem;">
+                                                    <i class="fas fa-money-bill-wave text-gold me-2"></i>
+                                                    Pago en Efectivo
+                                                </label>
+                                            </div>
+                                            <small class="text-gold d-block mt-1">Pago contra entrega - Se generará recibo</small>
+                                        </div>
+                                        
+                                        <div class="payment-option mb-3 p-3 rounded" style="border: 2px solid #d4af37; background: rgba(212, 175, 55, 0.1);">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="metodo_pago" id="nequi" value="nequi">
+                                                <label class="form-check-label text-white fw-bold" for="nequi" style="font-size: 1.2rem;">
+                                                    <i class="fas fa-mobile-alt text-gold me-2"></i>
+                                                    Nequi
+                                                </label>
+                                            </div>
+                                            <small class="text-gold d-block mt-1">Pago digital seguro y rápido</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <!-- Información de pago Nequi (oculta por defecto) -->
+                                        <div id="nequi-info" class="d-none">
+                                            <div class="bg-dark p-4 rounded border-gold">
+                                                <h5 class="text-gold mb-3" style="font-family: 'Dancing Script', cursive;">
+                                                    <i class="fas fa-mobile-alt me-2"></i>Información de Pago Nequi
+                                                </h5>
+                                                <p class="text-white mb-2">
+                                                    <strong>Número Nequi:</strong> <span class="text-gold">300 123 4567</span>
+                                                </p>
+                                                <p class="text-white mb-2">
+                                                    <strong>Nombre:</strong> <span class="text-gold">Migas de oro Dorè</span>
+                                                </p>
+                                                <p class="text-white mb-3">
+                                                    <strong>Total a pagar:</strong> <span class="text-gold fs-4" id="total-nequi">${{ "{:,.0f}".format(total).replace(",", ".") }}</span>
+                                                </p>
+                                                <div class="alert alert-info bg-transparent border-gold text-white">
+                                                    <small>
+                                                        <i class="fas fa-info-circle me-1"></i>
+                                                        Envía el comprobante de pago por WhatsApp al confirmar el pedido
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Información de pago efectivo -->
+                                        <div id="efectivo-info">
+                                            <div class="bg-dark p-4 rounded border-gold">
+                                                <h5 class="text-gold mb-3" style="font-family: 'Dancing Script', cursive;">
+                                                    <i class="fas fa-money-bill-wave me-2"></i>Pago en Efectivo
+                                                </h5>
+                                                <p class="text-white mb-2">
+                                                    Se generará un recibo con número de orden
+                                                </p>
+                                                <p class="text-white mb-2">
+                                                    <strong>Total a pagar:</strong> <span class="text-gold fs-4">${{ "{:,.0f}".format(total).replace(",", ".") }}</span>
+                                                </p>
+                                                <div class="alert alert-success bg-transparent border-gold text-white">
+                                                    <small>
+                                                        <i class="fas fa-check-circle me-1"></i>
+                                                        Pago seguro contra entrega
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones de acción con diseño elegante -->
+                        <div class="d-flex gap-3 mb-4">
+                            <a href="{{ url_for('ventas.carrito') }}" class="btn btn-outline-light btn-lg" style="border: 2px solid #d4af37; color: #d4af37; font-family: 'Dancing Script', cursive; font-size: 1.3rem;">
+                                <i class="fas fa-arrow-left me-2"></i>Volver al Carrito
+                            </a>
+                            <button type="submit" class="btn btn-lg flex-grow-1" style="background: linear-gradient(45deg, #d4af37, #f4d03f); color: #000; font-weight: bold; font-family: 'Dancing Script', cursive; font-size: 1.4rem; border: none;">
+                                <i class="fas fa-check me-2"></i>Confirmar Pedido
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Resumen del pedido mejorado -->
+                <div class="col-lg-4">
+                    <div class="card sticky-top border-0 shadow-lg" style="top: 100px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
+                        <div class="card-header bg-transparent border-0">
+                            <h4 class="text-white mb-0" style="font-family: 'Dancing Script', cursive; font-size: 2rem;">
+                                <i class="fas fa-shopping-bag text-gold me-2"></i>
+                                Resumen del Pedido
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            {% for item in items %}
+                            <div class="d-flex justify-content-between align-items-center mb-3 pb-3" style="border-bottom: 1px solid #d4af37;">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 text-white">{{ item[3] }}</h6>
+                                    <small class="text-gold">Cantidad: {{ item[2] }} | Precio unitario: ${{ "{:,.0f}".format(item[4]).replace(",", ".") }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-gold fs-6">${{ "{:,.0f}".format(item[2] * item[4]).replace(",", ".") }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                            <hr style="border-color: #d4af37;">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-white">Subtotal:</span>
+                                <span class="text-gold">${{ "{:,.0f}".format(total).replace(",", ".") }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-white">Envío:</span>
+                                <span class="text-success fw-bold">Gratis</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <strong class="text-white fs-5">Total:</strong>
+                                <strong class="text-gold fs-3" style="font-family: 'Dancing Script', cursive;">${{ "{:,.0f}".format(total).replace(",", ".") }}</strong>
+                            </div>
+                            
+                            <div class="bg-dark p-3 rounded" style="border: 1px solid #d4af37;">
+                                <small class="text-white">
+                                    <i class="fas fa-shield-alt text-gold me-2"></i>
+                                    <strong class="text-gold">Compra Segura:</strong><br>
+                                    • Productos frescos garantizados<br>
+                                    • Entrega puntual<br>
+                                    • Satisfacción garantizada<br>
+                                    • Soporte 24/7
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de recibo para pago en efectivo -->
+<div class="modal fade" id="reciboModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark border-gold">
+            <div class="modal-header border-gold">
+                <h5 class="modal-title text-white" style="font-family: 'Dancing Script', cursive; font-size: 1.8rem;">
+                    <i class="fas fa-receipt text-gold me-2"></i>Recibo de Pedido
+                </h5>
+            </div>
+            <div class="modal-body" id="recibo-content">
+                <!-- El contenido del recibo se generará dinámicamente -->
+            </div>
+            <div class="modal-footer border-gold">
+                <button type="button" class="btn btn-outline-light" onclick="descargarReciboPDF()">
+                    <i class="fas fa-download me-2"></i>Descargar PDF
+                </button>
+                <button type="button" class="btn" style="background-color: var(--primary-color); color: var(--dark-bg);" onclick="cerrarYContinuar()">
+                    <i class="fas fa-check me-2"></i>Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    document.head.appendChild(script);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        
+        // Establecer fecha actual (mínimo hoy)
+        const today = now.toISOString().split('T')[0];
+        document.getElementById('fecha_entrega').value = today;
+        document.getElementById('fecha_entrega').min = today;
+        
+        // Establecer hora actual + 2 horas (tiempo mínimo de preparación)
+        now.setHours(now.getHours() + 2);
+        const timeString = now.toTimeString().slice(0, 5);
+        document.getElementById('hora_entrega').value = timeString;
+        
+        // Manejar cambio de método de pago
+        const metodoPago = document.querySelectorAll('input[name="metodo_pago"]');
+        metodoPago.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const nequiInfo = document.getElementById('nequi-info');
+                const efectivoInfo = document.getElementById('efectivo-info');
+                
+                if (this.value === 'nequi') {
+                    nequiInfo.classList.remove('d-none');
+                    efectivoInfo.classList.add('d-none');
+                } else {
+                    nequiInfo.classList.add('d-none');
+                    efectivoInfo.classList.remove('d-none');
+                }
+            });
+        });
+    });
+
+    let currentReceiptData = null;
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const direccion = document.getElementById('direccion_entrega').value.trim();
+        const telefono = document.getElementById('telefono_contacto').value.trim();
+        const fecha = document.getElementById('fecha_entrega').value;
+        const hora = document.getElementById('hora_entrega').value;
+        const metodoPago = document.querySelector('input[name="metodo_pago"]:checked').value;
+        
+        // Validaciones
+        if (!direccion || !telefono || !fecha || !hora) {
+            mostrarNotificacion('Por favor completa todos los campos obligatorios', 'error');
+            return false;
+        }
+        
+        // Validar horario de entrega
+        const [hours, minutes] = hora.split(':').map(Number);
+        if (hours < 8 || hours > 20) {
+            mostrarNotificacion('El horario de entrega debe ser entre 8:00 AM y 8:00 PM', 'error');
+            return false;
+        }
+        
+        if (metodoPago === 'efectivo') {
+            // Generar recibo para pago en efectivo
+            generarRecibo();
+        } else if (metodoPago === 'nequi') {
+            // Procesar pago Nequi
+            procesarPagoNequi();
+        }
+    });
+
+    function generarRecibo() {
+        const numeroOrden = 'ORD-' + Date.now();
+        const fecha = new Date().toLocaleDateString('es-CO');
+        const hora = new Date().toLocaleTimeString('es-CO');
+        const fechaEntrega = document.getElementById('fecha_entrega').value;
+        const horaEntrega = document.getElementById('hora_entrega').value;
+        const telefono = document.getElementById('telefono_contacto').value;
+        const notas = document.getElementById('notas').value || 'Sin notas especiales';
+        
+        currentReceiptData = {
+            numeroOrden,
+            fecha,
+            hora,
+            fechaEntrega,
+            horaEntrega,
+            telefono,
+            notas,
+            total: {{ total }}
+        };
+        
+        const reciboHTML = `
+            <div class="text-center mb-4">
+                <h3 class="text-gold" style="font-family: 'Dancing Script', cursive; font-size: 2.5rem;">Migas de oro Dorè</h3>
+                <p class="text-white mb-1">Panadería Artesanal</p>
+                <p class="text-gold" style="font-size: 0.9rem;">NIT: 123.456.789-0 | Reg. Sanitario: RS-2024-001</p>
+                <hr style="border-color: #d4af37;">
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-6">
+                    <strong class="text-gold">Número de Orden:</strong><br>
+                    <span class="text-white fs-5">${numeroOrden}</span>
+                </div>
+                <div class="col-6 text-end">
+                    <strong class="text-gold">Fecha y Hora:</strong><br>
+                    <span class="text-white">${fecha}</span><br>
+                    <span class="text-white">${hora}</span>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-6">
+                    <strong class="text-gold">Cliente:</strong><br>
+                    <span class="text-white">${telefono}</span>
+                </div>
+                <div class="col-6 text-end">
+                    <strong class="text-gold">Tipo de Servicio:</strong><br>
+                    <span class="text-white">Entrega a Domicilio</span>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <strong class="text-gold">Programado para:</strong><br>
+                <span class="text-white">${fechaEntrega} a las ${horaEntrega}</span>
+            </div>
+            
+            <div class="mb-4">
+                <strong class="text-gold">Instrucciones Especiales:</strong><br>
+                <span class="text-white">${notas}</span>
+            </div>
+            
+            <hr style="border-color: #d4af37;">
+            
+            <div class="mb-4">
+                <strong class="text-gold mb-3 d-block">Detalle de Productos:</strong>
+                {% for item in items %}
+                <div class="d-flex justify-content-between text-white mb-2">
+                    <div>
+                        <strong>{{ item[3] }}</strong><br>
+                        <small class="text-gold">Cantidad: {{ item[2] }} | Precio unitario: ${{ "{:,.0f}".format(item[4]).replace(",", ".") }}</small>
+                    </div>
+                    <div class="text-end">
+                        <strong>${{ "{:,.0f}".format(item[2] * item[4]).replace(",", ".") }}</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <hr style="border-color: #d4af37;">
+            
+            <div class="row mb-4">
+                <div class="col-6">
+                    <div class="mb-2">
+                        <span class="text-white">Subtotal:</span>
+                        <span class="text-gold float-end">${{ "{:,.0f}".format(total).replace(",", ".") }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-white">Descuento:</span>
+                        <span class="text-success float-end">$0.00</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-white">Domicilio:</span>
+                        <span class="text-success float-end">Gratis</span>
+                    </div>
+                </div>
+                <div class="col-6 text-end">
+                    <div class="bg-gold text-dark p-3 rounded">
+                        <strong>Total a Pagar:</strong><br>
+                        <span style="font-size: 1.8rem; font-family: 'Dancing Script', cursive;">${{ "{:,.0f}".format(total).replace(",", ".") }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4 p-3" style="background-color: rgba(212, 175, 55, 0.1); border-radius: 10px;">
+                <p class="text-white mb-2"><strong>Método de Pago:</strong> <span class="text-gold">Efectivo contra entrega</span></p>
+                <p class="text-gold mb-2" style="font-family: 'Dancing Script', cursive; font-size: 1.3rem;">¡Gracias por confiar en nosotros!</p>
+                <small class="text-white">
+                    <i class="fas fa-phone me-1"></i> Contacto: +57 300 123 4567 | 
+                    <i class="fas fa-envelope me-1"></i> info@migasdeorodoré.com
+                </small>
+            </div>
+        `;
+        
+        document.getElementById('recibo-content').innerHTML = reciboHTML;
+        const modal = new bootstrap.Modal(document.getElementById('reciboModal'));
+        modal.show();
+    }
+
+    function descargarReciboPDF() {
+        if (!currentReceiptData || typeof window.jsPDF === 'undefined') {
+            alert('Error al generar PDF. Intenta nuevamente.');
+            return;
+        }
+
+        const { jsPDF } = window.jsPDF;
+        const doc = new jsPDF();
+        
+        // Header
+        doc.setFontSize(20);
+        doc.text('Migas de oro Dorè', 105, 20, { align: 'center' });
+        doc.setFontSize(12);
+        doc.text('Panadería Artesanal', 105, 30, { align: 'center' });
+        doc.text('NIT: 123.456.789-0 | Reg. Sanitario: RS-2024-001', 105, 40, { align: 'center' });
+        
+        // Order details
+        doc.setFontSize(14);
+        doc.text(`Número de Orden: ${currentReceiptData.numeroOrden}`, 20, 60);
+        doc.text(`Fecha: ${currentReceiptData.fecha} ${currentReceiptData.hora}`, 20, 70);
+        doc.text(`Cliente: ${currentReceiptData.telefono}`, 20, 80);
+        doc.text(`Entrega programada: ${currentReceiptData.fechaEntrega} ${currentReceiptData.horaEntrega}`, 20, 90);
+        doc.text(`Instrucciones: ${currentReceiptData.notas}`, 20, 100);
+        
+        // Products
+        doc.text('Productos:', 20, 120);
+        let yPos = 130;
+        {% for item in items %}
+        doc.text('{{ item[3] }} x{{ item[2] }} - ${{ "{:,.0f}".format(item[2] * item[4]).replace(",", ".") }}', 20, yPos);
+        yPos += 10;
+        {% endfor %}
+        
+        // Total
+        doc.setFontSize(16);
+        doc.text(`Total: ${{ "{:,.0f}".format(total).replace(",", ".") }}`, 20, yPos + 20);
+        doc.text('Método de Pago: Efectivo contra entrega', 20, yPos + 35);
+        
+        // Footer
+        doc.setFontSize(10);
+        doc.text('¡Gracias por tu pedido!', 105, yPos + 50, { align: 'center' });
+        doc.text('Contacto: +57 300 123 4567 | info@migasdeorodoré.com', 105, yPos + 60, { align: 'center' });
+        
+        doc.save(`recibo-${currentReceiptData.numeroOrden}.pdf`);
+    }
+
+    function cerrarYContinuar() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('reciboModal'));
+        modal.hide();
+        
+        // Submit the form to process the order
+        document.getElementById('checkoutForm').submit();
+    }
+
+    function procesarPagoNequi() {
+        if (confirm('¿Has realizado el pago por Nequi? Asegúrate de enviar el comprobante por WhatsApp.')) {
+            document.getElementById('checkoutForm').submit();
+        }
+    }
+
+    // Función para mostrar notificaciones
+    function mostrarNotificacion(mensaje, tipo) {
+        // Implementar sistema de notificaciones
+        alert(mensaje);
+    }
+</script>
+{% endblock %}

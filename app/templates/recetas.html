@@ -1,0 +1,819 @@
+{% extends "base.html" %}
+
+{% block title %}Recetas - Migas de oro Dorè{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row text-center mb-5">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Recetas</li>
+                </ol>
+            </nav>
+            <!-- Changed title from cookie icons to simple "Recetas Sencillas" -->
+            <h1 class="display-3 brand-title mb-3" style="color: var(--primary-color);">Recetas Sencillas</h1>
+            <!-- Changed subtitle from bakery secrets to simple home recipes -->
+            <p class="lead text-muted">Recetas fáciles y deliciosas para preparar en casa</p>
+            <div class="mx-auto" style="width: 100px; height: 3px; background: var(--primary-color);"></div>
+        </div>
+    </div>
+
+    {% if receta_id %}
+    <!-- Individual Recipe View -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            {% if receta_id == 'muffins-arandanos' %}
+            <!-- Updated first recipe to blueberry muffins instead of chocolate cookies -->
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                <img src="/placeholder.svg?height=400&width=800" 
+                     class="card-img-top" alt="Muffins de Arándanos" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0" style="color: var(--primary-color);">Muffins de Arándanos</h2>
+                        <span class="badge bg-success fs-6">FÁCIL</span>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Tiempo:</strong> 25 min</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Porciones:</strong> 12 muffins</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-star fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Dificultad:</strong> Fácil</p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color);">Ingredientes:</h4>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i>2 tazas de harina de trigo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>3/4 taza de azúcar</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/3 taza de aceite vegetal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 huevo grande</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de leche</li>
+                        <li><i class="fas fa-check text-success me-2"></i>2 cucharaditas de polvo de hornear</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de arándanos frescos</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de sal</li>
+                    </ul>
+
+                    <h4 style="color: var(--primary-color);">Preparación:</h4>
+                    <ol class="mb-4">
+                        <li class="mb-2">Precalienta el horno a 200°C (400°F).</li>
+                        <li class="mb-2">En un bowl grande, mezcla harina, azúcar, polvo de hornear y sal.</li>
+                        <li class="mb-2">En otro bowl, bate el huevo, leche y aceite.</li>
+                        <li class="mb-2">Combina los ingredientes húmedos con los secos hasta apenas integrar.</li>
+                        <li class="mb-2">Incorpora suavemente los arándanos.</li>
+                        <li class="mb-2">Llena moldes para muffins 2/3 de su capacidad.</li>
+                        <li class="mb-2">Hornea por 20-25 minutos hasta que estén dorados.</li>
+                        <li class="mb-2">Deja enfriar 5 minutos antes de desmoldar.</li>
+                    </ol>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Consejo:</strong> Enharina los arándanos antes de agregarlos para evitar que se hundan.
+                    </div>
+                </div>
+            </div>
+            {% elif receta_id == 'brownies-chocolate' %}
+            <!-- Updated second recipe to chocolate brownies -->
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                <img src="/placeholder.svg?height=400&width=800" 
+                     class="card-img-top" alt="Brownies de Chocolate" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0" style="color: var(--primary-color);">Brownies de Chocolate</h2>
+                        <span class="badge bg-success fs-6">FÁCIL</span>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Tiempo:</strong> 35 min</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Porciones:</strong> 16 brownies</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-star fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Dificultad:</strong> Fácil</p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color);">Ingredientes:</h4>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de mantequilla</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de azúcar</li>
+                        <li><i class="fas fa-check text-success me-2"></i>2 huevos grandes</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/3 taza de cocoa en polvo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de harina de trigo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/4 cucharadita de sal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/4 cucharadita de polvo de hornear</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de chips de chocolate</li>
+                    </ul>
+
+                    <h4 style="color: var(--primary-color);">Preparación:</h4>
+                    <ol class="mb-4">
+                        <li class="mb-2">Precalienta el horno a 175°C (350°F).</li>
+                        <li class="mb-2">Derrite la mantequilla y mezcla con el azúcar.</li>
+                        <li class="mb-2">Agrega los huevos uno por uno batiendo bien.</li>
+                        <li class="mb-2">Incorpora la cocoa, harina, sal y polvo de hornear.</li>
+                        <li class="mb-2">Añade los chips de chocolate.</li>
+                        <li class="mb-2">Vierte en molde cuadrado engrasado.</li>
+                        <li class="mb-2">Hornea por 25-30 minutos.</li>
+                        <li class="mb-2">Deja enfriar completamente antes de cortar.</li>
+                    </ol>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Consejo:</strong> No hornees demasiado para mantener la textura húmeda y fudgy.
+                    </div>
+                </div>
+            </div>
+            {% elif receta_id == 'cookies-avena' %}
+            <!-- Updated third recipe to oatmeal cookies -->
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                <img src="/placeholder.svg?height=400&width=800" 
+                     class="card-img-top" alt="Cookies de Avena" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0" style="color: var(--primary-color);">Cookies de Avena</h2>
+                        <span class="badge bg-success fs-6">FÁCIL</span>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Tiempo:</strong> 20 min</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Porciones:</strong> 24 cookies</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-star fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Dificultad:</strong> Fácil</p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color);">Ingredientes:</h4>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de avena en hojuelas</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de harina de trigo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de azúcar morena</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de mantequilla derretida</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 huevo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 cucharadita de vainilla</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de canela</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/4 cucharadita de sal</li>
+                    </ul>
+
+                    <h4 style="color: var(--primary-color);">Preparación:</h4>
+                    <ol class="mb-4">
+                        <li class="mb-2">Precalienta el horno a 180°C (350°F).</li>
+                        <li class="mb-2">Mezcla avena, harina, canela y sal en un bowl.</li>
+                        <li class="mb-2">En otro bowl, combina mantequilla, azúcar, huevo y vainilla.</li>
+                        <li class="mb-2">Incorpora los ingredientes secos a los húmedos.</li>
+                        <li class="mb-2">Forma bolitas y aplasta ligeramente en la bandeja.</li>
+                        <li class="mb-2">Hornea por 12-15 minutos hasta dorar.</li>
+                        <li class="mb-2">Deja enfriar en la bandeja por 5 minutos.</li>
+                        <li class="mb-2">Transfiere a rejilla para enfriar completamente.</li>
+                    </ol>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Consejo:</strong> Puedes agregar pasas o chips de chocolate para más sabor.
+                    </div>
+                </div>
+            </div>
+            {% elif receta_id == 'pancakes-esponjosos' %}
+            <!-- Added fourth recipe to pancakes -->
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                <img src="/placeholder.svg?height=400&width=800" 
+                     class="card-img-top" alt="Pancakes Esponjosos" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0" style="color: var(--primary-color);">Pancakes Esponjosos</h2>
+                        <span class="badge bg-success fs-6">FÁCIL</span>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Tiempo:</strong> 15 min</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Porciones:</strong> 8 pancakes</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-star fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Dificultad:</strong> Fácil</p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color);">Ingredientes:</h4>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de harina de trigo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de azúcar</li>
+                        <li><i class="fas fa-check text-success me-2"></i>3 cucharadas de aceite vegetal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de leche</li>
+                        <li><i class="fas fa-check text-success me-2"></i>2 huevos grandes</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de sal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de bicarbonato de sodio</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 cucharadita de vainilla</li>
+                    </ul>
+
+                    <h4 style="color: var(--primary-color);">Preparación:</h4>
+                    <ol class="mb-4">
+                        <li class="mb-2">Precalienta el horno a 180°C (350°F).</li>
+                        <li class="mb-2">En un bowl grande, mezcla harina, azúcar, sal y bicarbonato de sodio.</li>
+                        <li class="mb-2">En otro bowl, bate la leche, aceite y huevos.</li>
+                        <li class="mb-2">Agrega la vainilla al bowl húmedo.</li>
+                        <li class="mb-2">Combina los ingredientes secos con los húmedos hasta obtener una mezcla homogénea.</li>
+                        <li class="mb-2">Calienta una sartén antiadherente a fuego medio-bajo.</li>
+                        <li class="mb-2">Vierte pequeñas porciones de la mezcla en la sartén.</li>
+                        <li class="mb-2">Cocina hasta que estén dorados por ambos lados.</li>
+                    </ol>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Consejo:</strong> No bates demasiado los ingredientes para mantener la textura esponjosa.
+                    </div>
+                </div>
+            </div>
+            {% elif receta_id == 'cupcakes-vainilla' %}
+            <!-- Added fifth recipe to cupcakes -->
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                <img src="/placeholder.svg?height=400&width=800" 
+                     class="card-img-top" alt="Cupcakes de Vainilla" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0" style="color: var(--primary-color);">Cupcakes de Vainilla</h2>
+                        <span class="badge bg-success fs-6">FÁCIL</span>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Tiempo:</strong> 30 min</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Porciones:</strong> 12 cupcakes</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-star fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Dificultad:</strong> Fácil</p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color);">Ingredientes:</h4>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de harina de trigo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de azúcar</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de aceite vegetal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 huevo grande</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de leche</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 cucharadita de vainilla</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de sal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/4 cucharadita de polvo de hornear</li>
+                    </ul>
+
+                    <h4 style="color: var(--primary-color);">Preparación:</h4>
+                    <ol class="mb-4">
+                        <li class="mb-2">Precalienta el horno a 180°C (350°F).</li>
+                        <li class="mb-2">En un bowl grande, mezcla harina, azúcar, sal y polvo de hornear.</li>
+                        <li class="mb-2">En otro bowl, bate el huevo, aceite y leche.</li>
+                        <li class="mb-2">Agrega la vainilla al bowl húmedo.</li>
+                        <li class="mb-2">Combina los ingredientes secos con los húmedos hasta obtener una mezcla homogénea.</li>
+                        <li class="mb-2">Llena moldes para cupcakes 2/3 de su capacidad.</li>
+                        <li class="mb-2">Hornea por 20-25 minutos hasta que estén dorados.</li>
+                        <li class="mb-2">Deja enfriar 5 minutos antes de desmoldar.</li>
+                    </ol>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Consejo:</strong> Puedes decorar con frosting cremoso y frutas frescas para un toque especial.
+                    </div>
+                </div>
+            </div>
+            {% elif receta_id == 'pan-banana' %}
+            <!-- Added sixth recipe to banana bread -->
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                <img src="/placeholder.svg?height=400&width=800" 
+                     class="card-img-top" alt="Pan de Banana" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0" style="color: var(--primary-color);">Pan de Banana</h2>
+                        <span class="badge bg-success fs-6">FÁCIL</span>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Tiempo:</strong> 60 min</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Porciones:</strong> 8 porciones</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-star fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Dificultad:</strong> Fácil</p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color);">Ingredientes:</h4>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i>2 tazas de harina de trigo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de azúcar</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de aceite vegetal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>2 huevos grandes</li>
+                        <li><i class="fas fa-check text-success me-2"></i>2 tazas de puré de banana</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 cucharadita de vainilla</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de sal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de polvo de hornear</li>
+                    </ul>
+
+                    <h4 style="color: var(--primary-color);">Preparación:</h4>
+                    <ol class="mb-4">
+                        <li class="mb-2">Precalienta el horno a 180°C (350°F).</li>
+                        <li class="mb-2">En un bowl grande, mezcla harina, azúcar, sal y polvo de hornear.</li>
+                        <li class="mb-2">En otro bowl, bate los huevos, aceite y puré de banana.</li>
+                        <li class="mb-2">Agrega la vainilla al bowl húmedo.</li>
+                        <li class="mb-2">Combina los ingredientes secos con los húmedos hasta obtener una mezcla homogénea.</li>
+                        <li class="mb-2">Vierte la mezcla en un molde para pan engrasado y enharinado.</li>
+                        <li class="mb-2">Hornea por 50-60 minutos hasta que esté dorado por arriba.</li>
+                        <li class="mb-2">Deja enfriar completamente antes de desmoldar.</li>
+                    </ol>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Consejo:</strong> Usa bananas maduras para un sabor más intenso.
+                    </div>
+                </div>
+            </div>
+            {% elif receta_id == 'donas-glaseadas' %}
+            <!-- Added seventh recipe to glazed donuts -->
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                <img src="/placeholder.svg?height=400&width=800" 
+                     class="card-img-top" alt="Donas Glaseadas" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0" style="color: var(--primary-color);">Donas Glaseadas</h2>
+                        <span class="badge bg-success fs-6">FÁCIL</span>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Tiempo:</strong> 45 min</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Porciones:</strong> 12 donas</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-star fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Dificultad:</strong> Fácil</p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color);">Ingredientes:</h4>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i>2 tazas de harina de trigo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de azúcar</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de aceite vegetal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>2 huevos grandes</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de leche</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 cucharadita de vainilla</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de sal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de polvo de hornear</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de glaseado de donas</li>
+                    </ul>
+
+                    <h4 style="color: var(--primary-color);">Preparación:</h4>
+                    <ol class="mb-4">
+                        <li class="mb-2">Precalienta el horno a 180°C (350°F).</li>
+                        <li class="mb-2">En un bowl grande, mezcla harina, azúcar, sal y polvo de hornear.</li>
+                        <li class="mb-2">En otro bowl, bate los huevos, aceite y leche.</li>
+                        <li class="mb-2">Agrega la vainilla al bowl húmedo.</li>
+                        <li class="mb-2">Combina los ingredientes secos con los húmedos hasta obtener una mezcla homogénea.</li>
+                        <li class="mb-2">Forma bolitas y aplasta ligeramente en la bandeja.</li>
+                        <li class="mb-2">Hornea por 12-15 minutos hasta que estén doradas por ambos lados.</li>
+                        <li class="mb-2">Deja enfriar en la bandeja por 5 minutos.</li>
+                        <li class="mb-2">Transfiere a rejilla para enfriar completamente.</li>
+                        <li class="mb-2">Glasea las donas con el glaseado de donas.</li>
+                    </ol>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Consejo:</strong> Puedes decorar con glaseado de diferentes sabores.
+                    </div>
+                </div>
+            </div>
+            {% elif receta_id == 'waffles-belgas' %}
+            <!-- Added eighth recipe to belgian waffles -->
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                <img src="/placeholder.svg?height=400&width=800" 
+                     class="card-img-top" alt="Waffles Belgas" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0" style="color: var(--primary-color);">Waffles Belgas</h2>
+                        <span class="badge bg-success fs-6">FÁCIL</span>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Tiempo:</strong> 20 min</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Porciones:</strong> 6 waffles</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-star fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Dificultad:</strong> Fácil</p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color);">Ingredientes:</h4>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i>2 tazas de harina de trigo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de azúcar</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de aceite vegetal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>2 huevos grandes</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 taza de leche</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1 cucharadita de vainilla</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de sal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de bicarbonato de sodio</li>
+                    </ul>
+
+                    <h4 style="color: var(--primary-color);">Preparación:</h4>
+                    <ol class="mb-4">
+                        <li class="mb-2">Precalienta el horno a 180°C (350°F).</li>
+                        <li class="mb-2">En un bowl grande, mezcla harina, azúcar, sal y bicarbonato de sodio.</li>
+                        <li class="mb-2">En otro bowl, bate los huevos, aceite y leche.</li>
+                        <li class="mb-2">Agrega la vainilla al bowl húmedo.</li>
+                        <li class="mb-2">Combina los ingredientes secos con los húmedos hasta obtener una mezcla homogénea.</li>
+                        <li class="mb-2">Calienta una sartén antiadherente a fuego medio-bajo.</li>
+                        <li class="mb-2">Vierte pequeñas porciones de la mezcla en la sartén.</li>
+                        <li class="mb-2">Cocina hasta que estén dorados por ambos lados.</li>
+                    </ol>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Consejo:</strong> Sirve con miel o frutas frescas para un toque especial.
+                    </div>
+                </div>
+            </div>
+            {% elif receta_id == 'cheesecake-fresa' %}
+            <!-- Added ninth recipe to strawberry cheesecake -->
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));">
+                <img src="/placeholder.svg?height=400&width=800" 
+                     class="card-img-top" alt="Cheesecake de Fresa" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0" style="color: var(--primary-color);">Cheesecake de Fresa</h2>
+                        <span class="badge bg-success fs-6">FÁCIL</span>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Tiempo:</strong> 90 min</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Porciones:</strong> 10 porciones</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-star fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <p class="mb-0"><strong>Dificultad:</strong> Fácil</p>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color);">Ingredientes:</h4>
+                    <ul class="list-unstyled mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i>2 tazas de galletas de goma de mascarillo trituradas</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de mantequilla derretida</li>
+                        <li><i class="fas fa-check text-success me-2"></i>4 tazas de queso crema</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de azúcar</li>
+                        <li><i class="fas fa-check text-success me-2"></i>4 huevos grandes</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 taza de puré de fresas</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/2 cucharadita de sal</li>
+                        <li><i class="fas fa-check text-success me-2"></i>1/4 cucharadita de esencia de vainilla</li>
+                    </ul>
+
+                    <h4 style="color: var(--primary-color);">Preparación:</h4>
+                    <ol class="mb-4">
+                        <li class="mb-2">Precalienta el horno a 180°C (350°F).</li>
+                        <li class="mb-2">En un bowl grande, mezcla las galletas trituradas con la mantequilla derretida.</li>
+                        <li class="mb-2">En otro bowl, bate el queso crema con el azúcar hasta obtener una mezcla cremosa.</li>
+                        <li class="mb-2">Agrega los huevos uno por uno batiendo bien después de cada uno.</li>
+                        <li class="mb-2">Añade la esencia de vainilla y mezcla bien.</li>
+                        <li class="mb-2">Vierte la mezcla de queso crema en un molde para cheesecake enharinado.</li>
+                        <li class="mb-2">Hornea por 50-60 minutos hasta que esté firme al centro.</li>
+                        <li class="mb-2">Deja enfriar completamente antes de refrigerarlo.</li>
+                        <li class="mb-2">Después de enfriarlo, cubre con el puré de fresas.</li>
+                    </ol>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Consejo:</strong> Usa fresas frescas para un sabor más intenso.
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('recetas') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a Recetas
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Recipes List View -->
+    <!-- Removed the "Mostrando 0 recetas" text that was showing incorrectly -->
+    
+    <div class="row g-4" id="recipes-container">
+        <div class="col-12">
+            <p class="text-muted">Mostrando {{ recipes|length }} recetas de {{ total_recipes }} disponibles</p>
+        </div>
+    </div>
+    
+    <div class="row g-4" id="recipes-container">
+        {% set recipes_data = [
+            {
+                'id': 'muffins-arandanos',
+                'title': 'Muffins de Arándanos',
+                'description': 'Muffins esponjosos con arándanos frescos, perfectos para el desayuno.',
+                'time': '25 min',
+                'servings': '12 muffins',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'brownies-chocolate',
+                'title': 'Brownies de Chocolate',
+                'description': 'Brownies húmedos y chocolatosos, irresistibles para los amantes del chocolate.',
+                'time': '35 min',
+                'servings': '16 brownies',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'cookies-avena',
+                'title': 'Cookies de Avena',
+                'description': 'Cookies caseras de avena, crujientes y llenas de sabor tradicional.',
+                'time': '20 min',
+                'servings': '24 cookies',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'pancakes-esponjosos',
+                'title': 'Pancakes Esponjosos',
+                'description': 'Pancakes súper esponjosos y dorados, perfectos para un desayuno especial.',
+                'time': '15 min',
+                'servings': '8 pancakes',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'cupcakes-vainilla',
+                'title': 'Cupcakes de Vainilla',
+                'description': 'Cupcakes suaves de vainilla con frosting cremoso, ideales para celebraciones.',
+                'time': '30 min',
+                'servings': '12 cupcakes',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'pan-banana',
+                'title': 'Pan de Banana',
+                'description': 'Pan húmedo y aromático de banana, perfecto para aprovechar bananas maduras.',
+                'time': '60 min',
+                'servings': '8 porciones',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'donas-glaseadas',
+                'title': 'Donas Glaseadas',
+                'description': 'Donas caseras suaves con glaseado dulce, un clásico irresistible.',
+                'time': '45 min',
+                'servings': '12 donas',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'waffles-belgas',
+                'title': 'Waffles Belgas',
+                'description': 'Waffles crujientes por fuera y esponjosos por dentro, perfectos con miel.',
+                'time': '20 min',
+                'servings': '6 waffles',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'cheesecake-fresa',
+                'title': 'Cheesecake de Fresa',
+                'description': 'Cheesecake cremoso con topping de fresas frescas, un postre elegante.',
+                'time': '90 min',
+                'servings': '10 porciones',
+                'image': '/placeholder.svg?height=250&width=400'
+            }
+        ] %}
+        
+        {% for recipe in recipes_data[:6] %}
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-lg" style="background: linear-gradient(135deg, var(--darker-bg), var(--dark-bg));">
+                <img src="{{ recipe.image }}" 
+                     class="card-img-top" alt="{{ recipe.title }}" style="height: 250px; object-fit: cover;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0" style="color: var(--primary-color);">{{ recipe.title }}</h5>
+                        <span class="badge bg-success">FÁCIL</span>
+                    </div>
+                    <p class="card-text text-muted mb-3">{{ recipe.description }}</p>
+                    <div class="d-flex justify-content-between text-muted mb-3">
+                        <small><i class="fas fa-clock me-1"></i> {{ recipe.time }}</small>
+                        <small><i class="fas fa-users me-1"></i> {{ recipe.servings }}</small>
+                    </div>
+                    <a href="{{ url_for('recetas', receta_id=recipe.id) }}" class="btn btn-primary w-100">
+                        Ver Receta Completa
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Updated pagination controls with better styling and functionality -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Navegación de recetas">
+                <ul class="pagination justify-content-center" style="--bs-pagination-bg: var(--darker-bg); --bs-pagination-border-color: var(--primary-color); --bs-pagination-color: var(--primary-color); --bs-pagination-hover-bg: var(--primary-color); --bs-pagination-hover-color: white; --bs-pagination-active-bg: var(--primary-color); --bs-pagination-active-border-color: var(--primary-color);">
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="showPage(1)" style="background: var(--darker-bg); border-color: var(--primary-color); color: var(--primary-color);">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#" onclick="showPage(1)" style="background: var(--primary-color); border-color: var(--primary-color);">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="showPage(2)" style="background: var(--darker-bg); border-color: var(--primary-color); color: var(--primary-color);">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="showPage(2)" style="background: var(--darker-bg); border-color: var(--primary-color); color: var(--primary-color);">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <p class="text-center text-muted mt-3">
+                <small id="pagination-info">Página 1 de 2 • Total: 9 recetas</small>
+            </p>
+        </div>
+    </div>
+
+    <!-- Added JavaScript for pagination functionality -->
+    <script>
+        const allRecipesData = [
+            {
+                'id': 'muffins-arandanos',
+                'title': 'Muffins de Arándanos',
+                'description': 'Muffins esponjosos con arándanos frescos, perfectos para el desayuno.',
+                'time': '25 min',
+                'servings': '12 muffins',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'brownies-chocolate',
+                'title': 'Brownies de Chocolate',
+                'description': 'Brownies húmedos y chocolatosos, irresistibles para los amantes del chocolate.',
+                'time': '35 min',
+                'servings': '16 brownies',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'cookies-avena',
+                'title': 'Cookies de Avena',
+                'description': 'Cookies caseras de avena, crujientes y llenas de sabor tradicional.',
+                'time': '20 min',
+                'servings': '24 cookies',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'pancakes-esponjosos',
+                'title': 'Pancakes Esponjosos',
+                'description': 'Pancakes súper esponjosos y dorados, perfectos para un desayuno especial.',
+                'time': '15 min',
+                'servings': '8 pancakes',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'cupcakes-vainilla',
+                'title': 'Cupcakes de Vainilla',
+                'description': 'Cupcakes suaves de vainilla con frosting cremoso, ideales para celebraciones.',
+                'time': '30 min',
+                'servings': '12 cupcakes',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'pan-banana',
+                'title': 'Pan de Banana',
+                'description': 'Pan húmedo y aromático de banana, perfecto para aprovechar bananas maduras.',
+                'time': '60 min',
+                'servings': '8 porciones',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'donas-glaseadas',
+                'title': 'Donas Glaseadas',
+                'description': 'Donas caseras suaves con glaseado dulce, un clásico irresistible.',
+                'time': '45 min',
+                'servings': '12 donas',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'waffles-belgas',
+                'title': 'Waffles Belgas',
+                'description': 'Waffles crujientes por fuera y esponjosos por dentro, perfectos con miel.',
+                'time': '20 min',
+                'servings': '6 waffles',
+                'image': '/placeholder.svg?height=250&width=400'
+            },
+            {
+                'id': 'cheesecake-fresa',
+                'title': 'Cheesecake de Fresa',
+                'description': 'Cheesecake cremoso con topping de fresas frescas, un postre elegante.',
+                'time': '90 min',
+                'servings': '10 porciones',
+                'image': '/placeholder.svg?height=250&width=400'
+            }
+        ];
+
+        let currentPage = 1;
+        const recipesPerPage = 6;
+
+        function createRecipeCard(recipe) {
+            return `
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-lg" style="background: linear-gradient(135deg, var(--darker-bg), var(--dark-bg));">
+                        <img src="${recipe.image}" 
+                             class="card-img-top" alt="${recipe.title}" style="height: 250px; object-fit: cover;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0" style="color: var(--primary-color);">${recipe.title}</h5>
+                                <span class="badge bg-success">FÁCIL</span>
+                            </div>
+                            <p class="card-text text-muted mb-3">${recipe.description}</p>
+                            <div class="d-flex justify-content-between text-muted mb-3">
+                                <small><i class="fas fa-clock me-1"></i> ${recipe.time}</small>
+                                <small><i class="fas fa-users me-1"></i> ${recipe.servings}</small>
+                            </div>
+                            <a href="{{ url_for('recetas', receta_id='${recipe.id}') }}" class="btn btn-primary w-100">
+                                Ver Receta Completa
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showPage(page) {
+            currentPage = page;
+            const startIndex = (page - 1) * recipesPerPage;
+            const endIndex = startIndex + recipesPerPage;
+            const recipesToShow = allRecipesData.slice(startIndex, endIndex);
+            
+            const container = document.querySelector('#recipes-container');
+            container.innerHTML = recipesToShow.map(recipe => createRecipeCard(recipe)).join('');
+            
+            document.querySelectorAll('.page-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.page-link').forEach(link => {
+                if (link.textContent.trim() === page.toString()) {
+                    link.parentElement.classList.add('active');
+                }
+            });
+            
+            // Update info
+            const totalPages = Math.ceil(allRecipesData.length / recipesPerPage);
+            document.getElementById('pagination-info').textContent = `Página ${page} de ${totalPages} • Total: ${allRecipesData.length} recetas`;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!document.querySelector('[href*="receta_id"]')) {
+                showPage(1);
+            }
+        });
+    </script>
+    {% endif %}
+</div>
+{% endblock %}

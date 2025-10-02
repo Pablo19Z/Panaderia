@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat de Ayuda - Migas de oro Dorè</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4af37;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #f5f5f5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #d4af37;
+        }
+
+        .chat-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #d4af37;
+            border-radius: 15px 15px 0 0;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .chat-header h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: #f5f5f5;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-header p {
+            color: #f5f5f5;
+        }
+
+        .chat-messages {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 1px solid #d4af37;
+            border-right: 1px solid #d4af37;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message.user .message-content {
+            background: #d4af37;
+            color: #1a1a1a;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.bot .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            color: #f5f5f5;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 0.25rem;
+        }
+
+        .chat-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #d4af37;
+            border-radius: 0 0 15px 15px;
+            padding: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 25px;
+            padding: 0.75rem 1rem;
+            color: #f5f5f5;
+            font-size: 0.9rem;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .chat-input button {
+            background: #d4af37;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            background: #b8941f;
+            transform: translateY(-2px);
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .suggestion-btn {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-btn:hover {
+            background: #d4af37;
+            color: #1a1a1a;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                margin: 1rem auto;
+                height: calc(100vh - 150px);
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo">Migas de oro Dorè</a>
+            <div class="nav-links">
+                <a href="{{ url_for('productos') }}">Productos</a>
+                <a href="{{ url_for('ver_carrito') }}">Carrito ({{ carrito_count }})</a>
+                {% if usuario %}
+                    <a href="{{ url_for(usuario.rol + '_dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Asistente Virtual</h1>
+            <p>¡Hola {{ usuario.nombre }}! ¿En qué puedo ayudarte hoy?</p>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            {% for mensaje in historial %}
+            <div class="message user">
+                <div class="message-content">
+                    {{ mensaje[0] }}
+                    <div class="message-time">{{ mensaje[2].strftime('%H:%M') }}</div>
+                </div>
+            </div>
+            <div class="message bot">
+                <div class="message-content">
+                    {{ mensaje[1] }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="suggestions">
+            <button class="suggestion-btn" onclick="enviarSugerencia('¿Cuáles son sus horarios?')">Horarios</button>
+            <button class="suggestion-btn" onclick="enviarSugerencia('¿Dónde están ubicados?')">Ubicación</button>
+            <button class="suggestion-btn" onclick="enviarSugerencia('¿Hacen delivery?')">Delivery</button>
+            <button class="suggestion-btn" onclick="enviarSugerencia('¿Cuáles son sus especialidades?')">Especialidades</button>
+            <button class="suggestion-btn" onclick="enviarSugerencia('¿Cómo puedo hacer un pedido?')">Pedidos</button>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Escribe tu mensaje aquí..." maxlength="500">
+            <button onclick="enviarMensaje()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function agregarMensaje(mensaje, esUsuario, tiempo = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${esUsuario ? 'user' : 'bot'}`;
+            
+            const timeStr = tiempo || new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'});
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    ${mensaje}
+                    ${esUsuario ? `<div class="message-time">${timeStr}</div>` : ''}
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function enviarMensaje() {
+            const mensaje = messageInput.value.trim();
+            if (!mensaje) return;
+
+            // Agregar mensaje del usuario
+            agregarMensaje(mensaje, true);
+            messageInput.value = '';
+
+            // Enviar al servidor
+            fetch('/api/chatbot/mensaje', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({mensaje: mensaje})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Agregar respuesta del bot
+                    setTimeout(() => {
+                        agregarMensaje(data.respuesta, false);
+                    }, 500);
+                } else {
+                    agregarMensaje('Lo siento, hubo un error. Intenta nuevamente.', false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                agregarMensaje('Error de conexión. Verifica tu internet.', false);
+            });
+        }
+
+        function enviarSugerencia(mensaje) {
+            messageInput.value = mensaje;
+            enviarMensaje();
+        }
+
+        // Enviar mensaje con Enter
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                enviarMensaje();
+            }
+        });
+
+        // Scroll inicial
+        scrollToBottom();
+    </script>
+</body>
+</html>

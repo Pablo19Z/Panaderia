@@ -1,0 +1,18 @@
+# Dependencias principales
+Flask==2.3.3
+Werkzeug==2.3.7
+Flask-WTF==1.1.1
+WTForms==3.0.1
+
+reportlab==4.0.4
+
+# Dependencias adicionales para la estructura modular
+email-validator==2.0.0
+
+# Dependencias adicionales opcionales para desarrollo
+# Descomenta si necesitas funcionalidades extra:
+# flask-cors==4.0.0        # Para CORS si necesitas API externa
+# python-dotenv==1.0.0     # Para variables de entorno desde archivo .env
+# gunicorn==21.2.0         # Para producción en servidores Linux
+# pytest==7.4.0           # Para testing
+# pytest-flask==1.2.0     # Para testing con Flask

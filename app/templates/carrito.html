@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Carrito de Compras - Panadería Migas de Oro{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="brand-title display-5">Mi Carrito</h1>
+        {% if items %}
+        <!-- Added clear cart button -->
+        <button class="btn btn-outline-danger" onclick="vaciarCarrito()">
+            <i class="fas fa-trash me-1"></i>Vaciar Carrito
+        </button>
+        {% endif %}
+    </div>
+    
+    {% if items %}
+        <div class="card">
+            <div class="card-body">
+                {% for item in items %}
+                <!-- Enhanced cart item display with quantity controls -->
+                <div class="row align-items-center border-bottom py-4" id="cart-item-{{ item[0] }}">
+                    <div class="col-md-2">
+                        <img src="{{ item[6] or '/placeholder.svg?height=100&width=100' }}" 
+                             alt="{{ item[3] }}" 
+                             class="img-fluid rounded">
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="mb-1">{{ item[3] }}</h5>
+                        <p class="text-muted mb-0">{{ item[7][:100] if item[7] else 'Delicioso producto artesanal' }}...</p>
+                        <small class="text-primary">${{ "{:,.0f}".format(item[4]).replace(",", ".") }} c/u</small>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Cantidad:</label>
+                        <div class="input-group input-group-sm">
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="cambiarCantidad({{ item[0] }}, -1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="form-control text-center" 
+                                   id="cantidad-{{ item[0] }}" 
+                                   value="{{ item[2] }}" 
+                                   min="1" 
+                                   max="{{ item[5] }}"
+                                   onchange="actualizarCantidad({{ item[0] }}, this.value)">
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="cambiarCantidad({{ item[0] }}, 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Stock: {{ item[5] }}</small>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="fw-bold text-primary mb-2" id="subtotal-{{ item[0] }}">
+                            ${{ "{:,.0f}".format(item[4] * item[2]).replace(",", ".") }}
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" 
+                                onclick="eliminarDelCarrito({{ item[0] }})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- Enhanced total section -->
+                <div class="row mt-4">
+                    <div class="col-md-8">
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('productos.catalogo') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left me-1"></i>Seguir Comprando
+                            </a>
+                            <button class="btn btn-outline-warning" onclick="location.reload()">
+                                <i class="fas fa-sync me-1"></i>Actualizar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Total del Pedido</h5>
+                                <h3 class="mb-0" id="total-carrito">${{ "{:,.0f}".format(total).replace(",", ".") }}</h3>
+                                <hr class="my-2">
+                                <button class="btn btn-light btn-lg w-100" onclick="procederPago()">
+                                    <i class="fas fa-credit-card me-1"></i>Proceder al Pago
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
+            <h3 class="text-muted mb-3">Tu carrito está vacío</h3>
+            <p class="text-muted mb-4">¡Descubre nuestros deliciosos productos artesanales!</p>
+            <a href="{{ url_for('productos.catalogo') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-cookie-bite me-2"></i>Ver Productos
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function cambiarCantidad(productoId, delta) {
+    const cantidadInput = document.getElementById(`cantidad-${productoId}`);
+    const nuevaCantidad = parseInt(cantidadInput.value) + delta;
+    const maxCantidad = parseInt(cantidadInput.max);
+    
+    if (nuevaCantidad >= 1 && nuevaCantidad <= maxCantidad) {
+        await actualizarCantidad(productoId, nuevaCantidad);
+    } else if (nuevaCantidad < 1) {
+        if (confirm('¿Deseas eliminar este producto del carrito?')) {
+            await eliminarDelCarrito(productoId);
+        }
+    } else {
+        mostrarNotificacion(`Solo hay ${maxCantidad} unidades disponibles`, 'warning');
+    }
+}
+
+async function actualizarCantidad(productoId, cantidad) {
+    try {
+        const response = await fetch('/api/carrito/actualizar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                producto_id: productoId,
+                cantidad: parseInt(cantidad)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update UI
+            document.getElementById(`cantidad-${productoId}`).value = cantidad;
+            
+            // Update subtotal
+            const precio = parseFloat(document.querySelector(`#cart-item-${productoId} .text-primary`).textContent.replace('$', '').split(' ')[0]);
+            document.getElementById(`subtotal-${productoId}`).textContent = `$${(precio * cantidad).toFixed(2)}`;
+            
+            // Update cart counter
+            document.getElementById('cart-count').textContent = data.carrito_count;
+            
+            // Recalculate total
+            recalcularTotal();
+            
+            mostrarNotificacion(data.message, 'success');
+        } else {
+            mostrarNotificacion(data.message, 'error');
+            // Reset input to previous value
+            location.reload();
+        }
+    } catch (error) {
+        mostrarNotificacion('Error al actualizar cantidad', 'error');
+    }
+}
+
+async function eliminarDelCarrito(productoId) {
+    try {
+        const response = await fetch('/api/carrito/eliminar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                producto_id: productoId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Remove item from UI
+            document.getElementById(`cart-item-${productoId}`).remove();
+            
+            // Update cart counter
+            document.getElementById('cart-count').textContent = data.carrito_count;
+            
+            // Recalculate total
+            recalcularTotal();
+            
+            mostrarNotificacion(data.message, 'success');
+            
+            // If cart is empty, reload page to show empty state
+            if (data.carrito_count === 0) {
+                setTimeout(() => location.reload(), 1500);
+            }
+        } else {
+            mostrarNotificacion(data.message, 'error');
+        }
+    } catch (error) {
+        mostrarNotificacion('Error al eliminar producto', 'error');
+    }
+}
+
+async function vaciarCarrito() {
+    if (!confirm('¿Estás seguro de que deseas vaciar todo el carrito?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/carrito/vaciar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('cart-count').textContent = '0';
+            mostrarNotificacion(data.message, 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            mostrarNotificacion(data.message, 'error');
+        }
+    } catch (error) {
+        mostrarNotificacion('Error al vaciar carrito', 'error');
+    }
+}
+
+function recalcularTotal() {
+    let total = 0;
+    document.querySelectorAll('[id^="subtotal-"]').forEach(subtotalElement => {
+        const subtotal = parseFloat(subtotalElement.textContent.replace('$', ''));
+        total += subtotal;
+    });
+    
+    const totalElement = document.getElementById('total-carrito');
+    if (totalElement) {
+        totalElement.textContent = `$${total.toFixed(2)}`;
+    }
+}
+
+function procederPago() {
+    // Redirect to checkout
+    window.location.href = '/ventas/checkout';
+}
+</script>
+{% endblock %}

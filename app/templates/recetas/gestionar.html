@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Recetas - Panadería Migas de Oro{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 100vh;">
+    <div class="container">
+        <!-- Header principal con estilo dorado -->
+        <div class="text-center mb-5">
+            <div class="position-relative">
+                <!-- Banner dorado elegante -->
+                <div class="bg-gradient p-4 rounded-4 shadow-lg mb-4" 
+                     style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%); border: 2px solid #b8860b;">
+                    <h1 class="display-4 fw-bold text-white mb-2" style="font-family: 'Dancing Script', cursive; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                        <i class="fas fa-book-open me-3" style="color: #ffffff;"></i>Gestión de Recetas
+                    </h1>
+                    <p class="text-white fs-5 mb-0" style="font-weight: 500; opacity: 0.9;">Recetas artesanales de la panadería</p>
+                </div>
+                
+                <!-- Botón nueva receta -->
+                <a href="{{ url_for('recetas.crear_receta') }}" 
+                   class="btn btn-lg px-5 py-3 rounded-pill shadow-lg position-absolute end-0 top-50 translate-middle-y"
+                   style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); border: 2px solid #b8860b; color: #1a1a1a; font-weight: 600;">
+                    <i class="fas fa-plus me-2"></i>Nueva Receta
+                </a>
+            </div>
+        </div>
+
+        <!-- Mensajes flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Estadísticas -->
+        <div class="row mb-5">
+            <div class="col-md-4 mb-3">
+                <div class="card border-0 shadow-lg rounded-4 h-100" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                    <div class="card-body text-center text-white">
+                        <div class="mb-3">
+                            <i class="fas fa-book fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold">{{ recetas|selectattr('activo')|list|length }}</h3>
+                        <p class="mb-0 opacity-75">Recetas Activas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card border-0 shadow-lg rounded-4 h-100" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
+                    <div class="card-body text-center text-white">
+                        <div class="mb-3">
+                            <i class="fas fa-clock fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold">{{ recetas|selectattr('dificultad', 'equalto', 'Fácil')|list|length }}</h3>
+                        <p class="mb-0 opacity-75">Recetas Fáciles</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card border-0 shadow-lg rounded-4 h-100" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
+                    <div class="card-body text-center text-white">
+                        <div class="mb-3">
+                            <i class="fas fa-pause-circle fs-1"></i>
+                        </div>
+                        <h3 class="fw-bold">{{ recetas|rejectattr('activo')|list|length }}</h3>
+                        <p class="mb-0 opacity-75">Inactivas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de recetas -->
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header py-4" style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); border-bottom: 3px solid #b8860b;">
+                <h4 class="mb-0 fw-bold text-dark">
+                    <i class="fas fa-list me-2"></i>Lista de Recetas
+                </h4>
+            </div>
+            
+            <div class="card-body p-0" style="background-color: #f8f9fa;">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead style="background: linear-gradient(135deg, #343a40 0%, #495057 100%);">
+                            <tr>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-book me-2"></i>Receta
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-tags me-2"></i>Categoría
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-clock me-2"></i>Tiempo
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-users me-2"></i>Porciones
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-signal me-2"></i>Dificultad
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-toggle-on me-2"></i>Estado
+                                </th>
+                                <th class="px-4 py-3 text-white fw-semibold">
+                                    <i class="fas fa-cogs me-2"></i>Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody style="background-color: white;">
+                            {% for receta in recetas %}
+                            <tr class="border-bottom">
+                                <td class="px-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <img class="rounded-3 shadow-sm border" 
+                                                 src="{{ receta.imagen or '/placeholder.svg?height=50&width=50' }}" 
+                                                 alt="{{ receta.nombre }}"
+                                                 style="width: 50px; height: 50px; object-fit: cover;"
+                                                 onerror="this.src='/placeholder.svg?height=50&width=50'">
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold text-dark">{{ receta.nombre }}</div>
+                                            <div class="text-muted small">
+                                                {{ (receta.descripcion or '')[:50] }}{% if receta.descripcion and receta.descripcion|length > 50 %}...{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge" style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); color: #1a1a1a; font-weight: 600;">
+                                        {% for categoria in categorias %}
+                                            {% if categoria.id == receta.categoria_id %}
+                                                {{ categoria.nombre }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="fw-semibold text-dark">{{ receta.tiempo_preparacion or 'N/A' }}</div>
+                                    <div class="text-muted small">minutos</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge bg-info">
+                                        <i class="fas fa-utensils me-1"></i>{{ receta.porciones or 'N/A' }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge {% if receta.dificultad == 'Fácil' %}bg-success{% elif receta.dificultad == 'Media' %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ receta.dificultad or 'Media' }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge {% if receta.activo %}bg-success{% else %}bg-danger{% endif %}">
+                                        <i class="fas fa-{{ 'check' if receta.activo else 'times' }} me-1"></i>
+                                        {% if receta.activo %}Activa{% else %}Inactiva{% endif %}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ url_for('recetas.editar_receta', receta_id=receta.id) }}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </a>
+                                        <form method="POST" action="{{ url_for('recetas.eliminar_receta', receta_id=receta.id) }}" 
+                                              class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar esta receta?')">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-book-open fs-1 mb-3 text-secondary"></i>
+                                        <h5 class="text-dark">No hay recetas registradas</h5>
+                                        <p>Comienza agregando tu primera receta</p>
+                                        <a href="{{ url_for('recetas.crear_receta') }}" 
+                                           class="btn" style="background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%); color: #1a1a1a; font-weight: 600;">
+                                            <i class="fas fa-plus me-2"></i>Agregar Receta
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+        transition: all 0.3s ease;
+    }
+    
+    .card {
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(212, 175, 55, 0.1) !important;
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
