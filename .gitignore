@@ -25,7 +25,6 @@ MANIFEST
 .webassets-cache
 
 # Base de datos
-*.db
 *.sqlite
 *.sqlite3
 
